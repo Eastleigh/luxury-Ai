@@ -18,10 +18,11 @@ import {
   Activity,
 } from "lucide-react";
 import { healthAlerts, transferBonuses, pointsPrograms } from "@/data/mock";
-import { formatPoints, formatCurrency } from "@/lib/utils";
+import { formatPoints, formatCurrency, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 export default function HealthPage() {
+  const mounted = useMounted();
   const criticalCount = healthAlerts.filter(
     (a) => a.severity === "critical"
   ).length;
@@ -80,7 +81,7 @@ export default function HealthPage() {
 
       {/* Health Score */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={mounted ? { opacity: 0, scale: 0.98 } : false}
         animate={{ opacity: 1, scale: 1 }}
         className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-r from-emerald-500/10 via-transparent to-amber-500/10 p-6"
       >
@@ -196,7 +197,7 @@ export default function HealthPage() {
             return (
               <motion.div
                 key={alert.id}
-                initial={{ opacity: 0, x: -10 }}
+                initial={mounted ? { opacity: 0, x: -10 } : false}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + i * 0.05 }}
                 className={`rounded-2xl border ${config.border} ${config.bg} p-4 transition-all hover:shadow-lg`}

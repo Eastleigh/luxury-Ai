@@ -14,10 +14,11 @@ import {
   DollarSign,
 } from "lucide-react";
 import { creditCards } from "@/data/mock";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 export default function OptimizerPage() {
+  const mounted = useMounted();
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -36,7 +37,7 @@ export default function OptimizerPage() {
 
       {/* AI Insight Banner */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={mounted ? { opacity: 0, y: 10 } : false}
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden rounded-2xl border border-luxury-gold/20 bg-gradient-to-r from-luxury-gold/10 via-luxury-gold/5 to-transparent p-5"
       >
@@ -98,7 +99,7 @@ export default function OptimizerPage() {
           {creditCards.map((card, i) => (
             <motion.div
               key={card.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={mounted ? { opacity: 0, y: 20 } : false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + i * 0.1 }}
               className={`relative overflow-hidden rounded-2xl border p-5 transition-all duration-300 hover:shadow-luxury ${

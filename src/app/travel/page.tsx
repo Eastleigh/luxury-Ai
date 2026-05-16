@@ -20,11 +20,12 @@ import {
   Send,
 } from "lucide-react";
 import { awardResults } from "@/data/mock";
-import { formatCurrency, formatPoints } from "@/lib/utils";
+import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
 export default function TravelPage() {
+  const mounted = useMounted();
   const [conciergeQuery, setConciergeQuery] = useState("");
 
   const cabinColors: Record<string, string> = {
@@ -223,7 +224,7 @@ export default function TravelPage() {
           {awardResults.map((result, i) => (
             <motion.div
               key={result.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={mounted ? { opacity: 0, y: 10 } : false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 + i * 0.05 }}
               className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-luxury-gold/20 hover:bg-white/[0.04]"

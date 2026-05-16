@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
   TrendingUp,
@@ -27,9 +27,11 @@ export function StatCard({
   iconColor = "text-luxury-gold",
   delay = 0,
 }: StatCardProps) {
+  const mounted = useMounted();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={mounted ? { opacity: 0, y: 20 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
       className="glass-card rounded-2xl p-5 glass-hover transition-all duration-300"

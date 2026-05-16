@@ -23,10 +23,11 @@ import {
   Target,
 } from "lucide-react";
 import { clients, affiliateLinks } from "@/data/mock";
-import { formatCurrency, formatPoints } from "@/lib/utils";
+import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 export default function CrmPage() {
+  const mounted = useMounted();
   const totalManagedSpend = clients.reduce((s, c) => s + c.monthlySpend, 0);
   const totalTrips = clients.reduce((s, c) => s + c.trips, 0);
   const totalAffRevenue = affiliateLinks.reduce((s, a) => s + a.revenue, 0);
@@ -117,7 +118,7 @@ export default function CrmPage() {
           {clients.map((client, i) => (
             <motion.div
               key={client.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={mounted ? { opacity: 0, y: 10 } : false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + i * 0.05 }}
               className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-luxury-gold/20 hover:bg-white/[0.04]"

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, useMounted } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -33,10 +33,11 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const mounted = useMounted();
 
   return (
     <motion.aside
-      initial={{ x: -20, opacity: 0 }}
+      initial={mounted ? { x: -20, opacity: 0 } : false}
       animate={{ x: 0, opacity: 1 }}
       className={cn(
         "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-white/[0.06] bg-[#0c0c0c]",

@@ -22,8 +22,10 @@ import {
 } from "lucide-react";
 import { contentArticles } from "@/data/mock";
 import { motion } from "framer-motion";
+import { useMounted } from "@/lib/utils";
 
 export default function ContentPage() {
+  const mounted = useMounted();
   const statusConfig: Record<
     string,
     { badge: "success" | "warning" | "default"; icon: typeof Check }
@@ -148,7 +150,7 @@ export default function ContentPage() {
             return (
               <motion.div
                 key={article.id}
-                initial={{ opacity: 0, y: 10 }}
+                initial={mounted ? { opacity: 0, y: 10 } : false}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.05 }}
                 className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-luxury-gold/20 hover:bg-white/[0.04]"

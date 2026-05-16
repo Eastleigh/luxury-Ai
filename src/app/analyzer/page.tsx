@@ -18,10 +18,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { spendCategories, categoryBreakdown, dashboardStats } from "@/data/mock";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 export default function AnalyzerPage() {
+  const mounted = useMounted();
   const totalMissed = spendCategories.reduce((sum, c) => sum + c.missedReward, 0);
   const totalSpend = spendCategories.reduce((sum, c) => sum + c.amount, 0);
   const totalOptimalReward = spendCategories.reduce(
@@ -96,7 +97,7 @@ export default function AnalyzerPage() {
 
       {/* Loss Summary */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={mounted ? { opacity: 0, scale: 0.98 } : false}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
         className="relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-r from-red-500/10 via-transparent to-emerald-500/10 p-6"

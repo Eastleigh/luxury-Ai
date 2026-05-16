@@ -12,14 +12,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, useMounted } from "@/lib/utils";
 
 export default function PricingPage() {
+  const mounted = useMounted();
   return (
     <div className="space-y-8">
       <div className="text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={mounted ? { opacity: 0, y: 20 } : false}
           animate={{ opacity: 1, y: 0 }}
         >
           <Badge variant="gold" size="md">
@@ -41,7 +42,7 @@ export default function PricingPage() {
         {membershipTiers.map((tier, i) => (
           <motion.div
             key={tier.name}
-            initial={{ opacity: 0, y: 20 }}
+            initial={mounted ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + i * 0.1 }}
             className={cn(
@@ -110,7 +111,7 @@ export default function PricingPage() {
 
       {/* Trust Section */}
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={mounted ? { opacity: 0 } : false}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
         className="mx-auto max-w-3xl text-center"

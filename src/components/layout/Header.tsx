@@ -2,11 +2,14 @@
 
 import { Bell, Search, Settings, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { useMounted } from "@/lib/utils";
 
 export function Header() {
+  const mounted = useMounted();
+
   return (
     <motion.header
-      initial={{ y: -10, opacity: 0 }}
+      initial={mounted ? { y: -10, opacity: 0 } : false}
       animate={{ y: 0, opacity: 1 }}
       className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/[0.06] bg-[#0a0a0a]/80 px-6 backdrop-blur-xl"
     >

@@ -24,10 +24,11 @@ import {
   healthAlerts,
   monthlySpendData,
 } from "@/data/mock";
-import { formatCurrency, formatPoints } from "@/lib/utils";
+import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 export default function DashboardPage() {
+  const mounted = useMounted();
   const totalEstimatedValue = pointsPrograms.reduce(
     (sum, p) => sum + p.estimatedValue,
     0
@@ -52,7 +53,7 @@ export default function DashboardPage() {
 
       {/* Loss Alert Banner */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={mounted ? { opacity: 0, scale: 0.98 } : false}
         animate={{ opacity: 1, scale: 1 }}
         className="relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-r from-red-500/10 via-red-500/5 to-transparent p-5"
       >
