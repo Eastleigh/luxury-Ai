@@ -19,6 +19,7 @@ import {
   Menu,
   X,
   Building2,
+  Shield,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 
@@ -32,6 +33,7 @@ const navItems = [
   { href: "/content", label: "Content Engine", icon: FileText },
   { href: "/pricing", label: "Membership", icon: Crown },
   { href: "/crm", label: "CRM & Clients", icon: Users },
+  { href: "/admin", label: "Admin", icon: Shield },
 ];
 
 export function Sidebar() {
