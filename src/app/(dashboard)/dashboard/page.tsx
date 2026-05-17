@@ -27,6 +27,7 @@ import {
 import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
 import { useSpendingData } from "@/lib/use-spending-data";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const mounted = useMounted();
@@ -62,10 +63,12 @@ export default function DashboardPage() {
               : "Your rewards portfolio is performing well. Here\u0027s your overview."}
           </p>
         </div>
-        <Button variant="gold" size="md">
-          <Sparkles className="h-4 w-4" />
-          AI Insights
-        </Button>
+        <Link href="/analyzer">
+          <Button variant="gold" size="md">
+            <Sparkles className="h-4 w-4" />
+            AI Insights
+          </Button>
+        </Link>
       </div>
 
       {/* Loss Alert Banner */}
@@ -91,10 +94,12 @@ export default function DashboardPage() {
               identified optimization opportunities across 8 categories.
             </p>
           </div>
-          <Button variant="secondary" size="sm">
-            View Analysis
-            <ArrowUpRight className="h-3 w-3" />
-          </Button>
+          <Link href="/analyzer">
+            <Button variant="secondary" size="sm">
+              View Analysis
+              <ArrowUpRight className="h-3 w-3" />
+            </Button>
+          </Link>
         </div>
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-red-500/5 blur-3xl" />
       </motion.div>
@@ -320,20 +325,21 @@ export default function DashboardPage() {
         <h2 className="text-base font-semibold text-white">Quick Actions</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { icon: Plane, label: "Search Awards", color: "text-blue-400" },
-            { icon: CreditCard, label: "Optimize Cards", color: "text-luxury-gold" },
-            { icon: ArrowRightLeft, label: "Transfer Points", color: "text-emerald-400" },
-            { icon: Users, label: "Manage Clients", color: "text-purple-400" },
+            { icon: Plane, label: "Search Awards", color: "text-blue-400", href: "/travel" },
+            { icon: CreditCard, label: "Optimize Cards", color: "text-luxury-gold", href: "/optimizer" },
+            { icon: ArrowRightLeft, label: "Transfer Points", color: "text-emerald-400", href: "/health" },
+            { icon: Users, label: "Manage Clients", color: "text-purple-400", href: "/crm" },
           ].map((action) => (
-            <button
+            <Link
               key={action.label}
+              href={action.href}
               className="flex flex-col items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-luxury-gold/20 hover:bg-white/[0.04]"
             >
               <action.icon className={`h-5 w-5 ${action.color}`} />
               <span className="text-xs font-medium text-platinum-300">
                 {action.label}
               </span>
-            </button>
+            </Link>
           ))}
         </div>
       </GlassCard>
