@@ -142,17 +142,21 @@ const pricingTiers = [
     name: "Professional",
     price: "$79",
     period: "/month",
-    description: "Full AI optimization for business owners spending $20K\u2013$200K/mo.",
+    description: "For business owners spending $20K\u2013$200K/mo who want to stop leaving rewards on the table.",
+    roi: "Average member recovers $18,400/yr in missed rewards \u2014 that\u2019s 19x your subscription.",
     features: [
-      "Unlimited loyalty programs",
-      "Unlimited award searches",
-      "Full AI Spend Analyzer with recommendations",
-      "Personalized card portfolio strategy",
-      "AI Travel Concierge (chat-based trip planning)",
-      "Connect up to 3 bank/card accounts (Plaid)",
-      "Points Health monitoring + email alerts",
-      "Real-time transfer bonus alerts",
-      "Custom spending reports",
+      "\u2014 SPENDING INTELLIGENCE \u2014",
+      "AI Spend Analyzer: scans every transaction, shows exactly which card to use where",
+      "Personalized card portfolio strategy based on your actual spend categories",
+      "Connect up to 3 bank/card accounts via Plaid \u2014 real data, not guesswork",
+      "Custom spending reports delivered monthly",
+      "\u2014 TRAVEL & AWARDS \u2014",
+      "AI Travel Concierge: chat-based trip planning using your points",
+      "Unlimited award searches across all airlines and hotels",
+      "Real-time transfer bonus alerts (e.g. \u201c30% Amex \u2192 Virgin bonus ends Friday\u201d)",
+      "\u2014 POINTS PROTECTION \u2014",
+      "Unlimited loyalty program tracking",
+      "Points Health monitoring + email alerts before points expire or devalue",
       "Priority email support",
     ],
     cta: "Start Pro Trial",
@@ -650,24 +654,37 @@ export default function LandingPage() {
                       <span className="text-platinum-500">{tier.period}</span>
                     )}
                   </div>
-                  <p className="mt-2 text-sm text-platinum-400">
-                    {tier.description}
-                  </p>
-                </div>
-                <ul className="mt-6 flex-1 space-y-3">
-                  {tier.features.map((f, j) => (
-                    <li key={j} className="flex items-start gap-2 text-sm">
-                      <Check
-                        className={`mt-0.5 h-4 w-4 shrink-0 ${
-                          tier.highlighted
-                            ? "text-luxury-gold"
-                            : "text-platinum-500"
-                        }`}
-                      />
-                      <span className="text-platinum-300">{f}</span>
-                    </li>
-                  ))}
-                </ul>
+                    <p className="mt-2 text-sm text-platinum-400">
+                      {tier.description}
+                    </p>
+                    {tier.roi && (
+                      <p className="mt-3 rounded-lg bg-luxury-gold/10 px-3 py-2 text-xs font-medium text-luxury-gold">
+                        {tier.roi}
+                      </p>
+                    )}
+                  </div>
+                  <ul className="mt-6 flex-1 space-y-3">
+                    {tier.features.map((f, j) => (
+                      <li key={j} className={`flex items-start gap-2 text-sm ${
+                        f.startsWith("\u2014") ? "mt-4 first:mt-0" : ""
+                      }`}>
+                        {f.startsWith("\u2014") ? (
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold/70">{f.replace(/\u2014/g, "").trim()}</span>
+                        ) : (
+                          <>
+                            <Check
+                              className={`mt-0.5 h-4 w-4 shrink-0 ${
+                                tier.highlighted
+                                  ? "text-luxury-gold"
+                                  : "text-platinum-500"
+                              }`}
+                            />
+                            <span className="text-platinum-300">{f}</span>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
                 <Link
                   href="/dashboard"
                   className={`mt-6 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all ${

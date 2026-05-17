@@ -110,18 +110,34 @@ export default function PricingPage() {
               <p className="mt-2 text-xs text-platinum-400">
                 {tier.description}
               </p>
+              {tier.highlighted && (
+                <p className="mt-3 rounded-lg bg-luxury-gold/10 px-3 py-2 text-[11px] font-medium text-luxury-gold">
+                  Average member recovers $18,400/yr in missed rewards — that&apos;s 19x your subscription.
+                </p>
+              )}
             </div>
 
             <div className="flex-1 space-y-3">
               {tier.features.map((feature) => (
-                <div key={feature} className="flex items-start gap-2.5">
-                  <Check
-                    className={cn(
-                      "mt-0.5 h-4 w-4 flex-shrink-0",
-                      tier.highlighted ? "text-luxury-gold" : "text-platinum-400"
-                    )}
-                  />
-                  <span className="text-sm text-platinum-300">{feature}</span>
+                <div key={feature} className={cn(
+                  "flex items-start gap-2.5",
+                  feature.startsWith("\u2014") && "mt-4 first:mt-0"
+                )}>
+                  {feature.startsWith("\u2014") ? (
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold/70">
+                      {feature.replace(/\u2014/g, "").trim()}
+                    </span>
+                  ) : (
+                    <>
+                      <Check
+                        className={cn(
+                          "mt-0.5 h-4 w-4 flex-shrink-0",
+                          tier.highlighted ? "text-luxury-gold" : "text-platinum-400"
+                        )}
+                      />
+                      <span className="text-sm text-platinum-300">{feature}</span>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
