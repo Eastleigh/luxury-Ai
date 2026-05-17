@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useMounted } from "@/lib/utils";
 import Link from "next/link";
@@ -201,8 +202,36 @@ const stats = [
   { value: "12.4x", label: "Average ROI" },
 ];
 
+const planKeys = ["free", "professional", "executive"];
+
 export default function LandingPage() {
   const mounted = useMounted();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (planKey: string) => {
+    if (planKey === "free") {
+      window.location.href = "/dashboard";
+      return;
+    }
+    setLoadingPlan(planKey);
+    try {
+      const res = await fetch("/api/stripe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planKey }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Failed to start checkout");
+      }
+    } catch {
+      alert("Failed to connect to payment system");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <div className="relative overflow-hidden">
@@ -685,16 +714,17 @@ export default function LandingPage() {
                       </li>
                     ))}
                   </ul>
-                <Link
-                  href="/dashboard"
-                  className={`mt-6 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all ${
+                <button
+                  onClick={() => handleSubscribe(planKeys[i])}
+                  disabled={loadingPlan === planKeys[i]}
+                  className={`mt-6 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all disabled:opacity-60 ${
                     tier.highlighted
                       ? "bg-luxury-gold text-black hover:bg-[#e0c992]"
                       : "border border-white/10 text-white hover:border-white/20 hover:bg-white/5"
                   }`}
                 >
-                  {tier.cta} →
-                </Link>
+                  {loadingPlan === planKeys[i] ? "Processing..." : `${tier.cta} →`}
+                </button>
               </motion.div>
             ))}
           </div>
