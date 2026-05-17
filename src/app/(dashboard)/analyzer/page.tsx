@@ -17,8 +17,12 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
-import { spendCategories, categoryBreakdown, dashboardStats } from "@/data/mock";
+import {
+  spendCategories as mockSpendCategories,
+  categoryBreakdown as mockCategoryBreakdown,
+} from "@/data/mock";
 import { formatCurrency, useMounted } from "@/lib/utils";
+import { useSpendingData } from "@/lib/use-spending-data";
 import { askAI } from "@/lib/ai";
 import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
 import { motion } from "framer-motion";
@@ -26,19 +30,31 @@ import { useState } from "react";
 
 export default function AnalyzerPage() {
   const mounted = useMounted();
+  const spending = useSpendingData();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+
+  const spendCategories = spending.hasRealData && spending.spendCategories.length > 0
+    ? spending.spendCategories
+    : mockSpendCategories;
+
+  const categoryBreakdown = spending.hasRealData && spending.categoryBreakdown.length > 0
+    ? spending.categoryBreakdown
+    : mockCategoryBreakdown;
 
   const handleRunAnalysis = async () => {
     setAiLoading(true);
     setAiError(null);
     setAiResponse(null);
     const spendData = spendCategories.map(c => `${c.name}: $${c.amount.toLocaleString()}/mo on ${c.currentCard} (optimal: ${c.optimalCard}, missing $${c.missedReward.toLocaleString()}/mo)`).join("\n");
+    const totalSpendForContext = spendCategories.reduce((s, c) => s + c.amount, 0);
     const { result, error } = await askAI({
       type: "analyzer",
       prompt: `Analyze my business spending and give me a comprehensive optimization report. Here are my current spending categories:\n${spendData}`,
-      context: "Business type: Construction/Contracting. Monthly spend: $185,000. Team size: 24 employees. Current cards: Amex Gold, Chase Sapphire, Capital One Venture, Personal Visa, Debit Card.",
+      context: spending.hasRealData
+        ? `Real transaction data from connected bank accounts. Monthly spend: $${totalSpendForContext.toLocaleString()}. Connected accounts: ${spending.connectedAccounts.map(a => a.institution_name).join(", ")}.`
+        : "Business type: Construction/Contracting. Monthly spend: $185,000. Team size: 24 employees. Current cards: Amex Gold, Chase Sapphire, Capital One Venture, Personal Visa, Debit Card.",
     });
     setAiLoading(false);
     if (error) setAiError(error);
@@ -87,35 +103,54 @@ export default function AnalyzerPage() {
           </a>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { name: "American Express", status: "connected", color: "#006FCF", cards: 3 },
-            { name: "Chase", status: "connected", color: "#1A4480", cards: 2 },
-            { name: "Capital One", status: "connected", color: "#D03027", cards: 1 },
-            { name: "Bank Account", status: "pending", color: "#808080", cards: 0 },
-          ].map((account) => (
-            <div
-              key={account.name}
-              className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3"
-            >
+          {spending.hasRealData ? (
+            spending.connectedAccounts.map((account) => (
               <div
-                className="flex h-10 w-10 items-center justify-center rounded-lg"
-                style={{ backgroundColor: `${account.color}20` }}
+                key={account.id}
+                className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3"
               >
-                <CreditCard className="h-5 w-5" style={{ color: account.color }} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/20">
+                  <CreditCard className="h-5 w-5 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-white">{account.institution_name}</p>
+                  <Badge variant="success" size="sm">
+                    {account.account_type}
+                  </Badge>
+                </div>
               </div>
-              <div>
-                <p className="text-xs font-medium text-white">{account.name}</p>
-                <Badge
-                  variant={account.status === "connected" ? "success" : "warning"}
-                  size="sm"
+            ))
+          ) : (
+            [
+              { name: "American Express", status: "connected", color: "#006FCF", cards: 3 },
+              { name: "Chase", status: "connected", color: "#1A4480", cards: 2 },
+              { name: "Capital One", status: "connected", color: "#D03027", cards: 1 },
+              { name: "Bank Account", status: "pending", color: "#808080", cards: 0 },
+            ].map((account) => (
+              <div
+                key={account.name}
+                className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3"
+              >
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: `${account.color}20` }}
                 >
-                  {account.status === "connected"
-                    ? `${account.cards} cards`
-                    : "Connect"}
-                </Badge>
+                  <CreditCard className="h-5 w-5" style={{ color: account.color }} />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-white">{account.name}</p>
+                  <Badge
+                    variant={account.status === "connected" ? "success" : "warning"}
+                    size="sm"
+                  >
+                    {account.status === "connected"
+                      ? `${account.cards} cards`
+                      : "Connect"}
+                  </Badge>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </GlassCard>
 

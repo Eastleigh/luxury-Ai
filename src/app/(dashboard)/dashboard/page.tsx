@@ -18,31 +18,48 @@ import {
   Building2,
 } from "lucide-react";
 import {
-  dashboardStats,
+  dashboardStats as mockDashboardStats,
   pointsPrograms,
   transferBonuses,
   healthAlerts,
-  monthlySpendData,
+  monthlySpendData as mockMonthlySpendData,
 } from "@/data/mock";
 import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
+import { useSpendingData } from "@/lib/use-spending-data";
 import { motion } from "framer-motion";
 
 export default function DashboardPage() {
   const mounted = useMounted();
+  const spending = useSpendingData();
   const totalEstimatedValue = pointsPrograms.reduce(
     (sum, p) => sum + p.estimatedValue,
     0
   );
+
+  const dashboardStats = spending.hasRealData
+    ? {
+        ...mockDashboardStats,
+        monthlySpend: spending.monthlySpend || spending.totalSpendLast30Days,
+      }
+    : mockDashboardStats;
+
+  const monthlySpendData = spending.hasRealData && spending.monthlySpendData.length > 0
+    ? spending.monthlySpendData
+    : mockMonthlySpendData;
+
+  const firstName = spending.userName.split(" ")[0];
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">
-            Welcome back, <span className="gold-gradient">Marcus</span>
+            Welcome back, <span className="gold-gradient">{firstName}</span>
           </h1>
           <p className="mt-1 text-sm text-platinum-400">
-            Your rewards portfolio is performing well. Here&apos;s your overview.
+            {spending.hasRealData
+              ? `Tracking ${spending.transactions.length} transactions from ${spending.connectedAccounts.length} connected account${spending.connectedAccounts.length !== 1 ? "s" : ""}.`
+              : "Your rewards portfolio is performing well. Here\u0027s your overview."}
           </p>
         </div>
         <Button variant="gold" size="md">

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { creditCards } from "@/data/mock";
 import { formatCurrency, useMounted } from "@/lib/utils";
+import { useSpendingData } from "@/lib/use-spending-data";
 import { askAI } from "@/lib/ai";
 import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
 import { getAffiliateUrl } from "@/lib/affiliates";
@@ -23,18 +24,28 @@ import { useState } from "react";
 
 export default function OptimizerPage() {
   const mounted = useMounted();
+  const spending = useSpendingData();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+
+  const realMonthlySpend = spending.hasRealData
+    ? (spending.monthlySpend || spending.totalSpendLast30Days)
+    : 0;
 
   const handleGetRecommendations = async () => {
     setAiLoading(true);
     setAiError(null);
     setAiResponse(null);
+    const spendBreakdown = spending.hasRealData && spending.spendCategories.length > 0
+      ? spending.spendCategories.map(c => `${c.name}: $${c.amount.toLocaleString()}/mo on ${c.currentCard}`).join(", ")
+      : "Digital Advertising $47,500, Equipment & Hardware $22,000, Shipping & Logistics $15,200, Software & SaaS $12,300, Travel & Flights $8,900, Client Dining $6,200, Telecommunications $4,800, Office Supplies $3,400";
     const { result, error } = await askAI({
       type: "optimizer",
       prompt: "Based on my business profile, recommend the optimal credit card portfolio. Tell me exactly which cards to get, which spending to put on each card, and the projected annual rewards. Include signup bonus strategy.",
-      context: "Business type: Construction/Contracting. Monthly spend: $185,000. Breakdown: Digital Advertising $47,500, Equipment & Hardware $22,000, Shipping & Logistics $15,200, Software & SaaS $12,300, Travel & Flights $8,900, Client Dining $6,200, Telecommunications $4,800, Office Supplies $3,400. Team size: 24 employees. Primary goal: Luxury travel. Currently using: Amex Gold, Chase Sapphire, Capital One Venture, Personal Visa, and debit cards.",
+      context: spending.hasRealData
+        ? `Real spending data from connected bank accounts. Monthly spend: $${realMonthlySpend.toLocaleString()}. Breakdown: ${spendBreakdown}. Connected accounts: ${spending.connectedAccounts.map(a => a.institution_name).join(", ")}. Primary goal: Luxury travel.`
+        : "Business type: Construction/Contracting. Monthly spend: $185,000. Breakdown: Digital Advertising $47,500, Equipment & Hardware $22,000, Shipping & Logistics $15,200, Software & SaaS $12,300, Travel & Flights $8,900, Client Dining $6,200, Telecommunications $4,800, Office Supplies $3,400. Team size: 24 employees. Primary goal: Luxury travel. Currently using: Amex Gold, Chase Sapphire, Capital One Venture, Personal Visa, and debit cards.",
     });
     setAiLoading(false);
     if (error) setAiError(error);
@@ -92,10 +103,10 @@ export default function OptimizerPage() {
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: "Business Type", value: "Construction / Contracting" },
-            { label: "Monthly Spend", value: "$185,000" },
+            { label: "Connected Accounts", value: spending.hasRealData ? `${spending.connectedAccounts.length} bank${spending.connectedAccounts.length !== 1 ? "s" : ""}` : "Not connected" },
+            { label: "Monthly Spend", value: spending.hasRealData ? formatCurrency(realMonthlySpend) : "$185,000" },
             { label: "Primary Goal", value: "Luxury Travel" },
-            { label: "Team Size", value: "24 employees" },
+            { label: "Categories", value: spending.hasRealData ? `${spending.spendCategories.length} tracked` : "8 categories" },
           ].map((item) => (
             <div
               key={item.label}
