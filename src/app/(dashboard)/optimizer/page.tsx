@@ -15,10 +15,31 @@ import {
 } from "lucide-react";
 import { creditCards } from "@/data/mock";
 import { formatCurrency, useMounted } from "@/lib/utils";
+import { askAI } from "@/lib/ai";
+import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function OptimizerPage() {
   const mounted = useMounted();
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const handleGetRecommendations = async () => {
+    setAiLoading(true);
+    setAiError(null);
+    setAiResponse(null);
+    const { result, error } = await askAI({
+      type: "optimizer",
+      prompt: "Based on my business profile, recommend the optimal credit card portfolio. Tell me exactly which cards to get, which spending to put on each card, and the projected annual rewards. Include signup bonus strategy.",
+      context: "Business type: Construction/Contracting. Monthly spend: $185,000. Breakdown: Digital Advertising $47,500, Equipment & Hardware $22,000, Shipping & Logistics $15,200, Software & SaaS $12,300, Travel & Flights $8,900, Client Dining $6,200, Telecommunications $4,800, Office Supplies $3,400. Team size: 24 employees. Primary goal: Luxury travel. Currently using: Amex Gold, Chase Sapphire, Capital One Venture, Personal Visa, and debit cards.",
+    });
+    setAiLoading(false);
+    if (error) setAiError(error);
+    else setAiResponse(result ?? null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -29,9 +50,9 @@ export default function OptimizerPage() {
             patterns, and travel goals.
           </p>
         </div>
-        <Button variant="gold">
+        <Button variant="gold" onClick={handleGetRecommendations} disabled={aiLoading}>
           <Sparkles className="h-4 w-4" />
-          Get Recommendations
+          {aiLoading ? "Optimizing..." : "Get Recommendations"}
         </Button>
       </div>
 
@@ -89,6 +110,14 @@ export default function OptimizerPage() {
           ))}
         </div>
       </GlassCard>
+
+      {/* AI Recommendations */}
+      <AIResponsePanel
+        response={aiResponse}
+        loading={aiLoading}
+        error={aiError}
+        onClose={() => { setAiResponse(null); setAiError(null); }}
+      />
 
       {/* Recommended Cards */}
       <div>

@@ -23,9 +23,35 @@ import {
 import { contentArticles } from "@/data/mock";
 import { motion } from "framer-motion";
 import { useMounted } from "@/lib/utils";
+import { askAI } from "@/lib/ai";
+import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
+import { useState } from "react";
 
 export default function ContentPage() {
   const mounted = useMounted();
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [activeType, setActiveType] = useState<string | null>(null);
+
+  const contentTypes = [
+    { icon: Newspaper, label: "Travel Deal Article", color: "text-blue-400", prompt: "Write a premium travel deal article about a limited-time business class award availability from New York to Tokyo using Amex Membership Rewards points via ANA. Include point costs, transfer steps, and estimated value per point. Make it exciting but professional." },
+    { icon: Mail, label: "Newsletter", color: "text-emerald-400", prompt: "Write a weekly newsletter for high-spending business owners covering: 1) This week's best transfer bonus (Amex to Virgin Atlantic 30%), 2) A new card recommendation for businesses spending $50K+/month on advertising, 3) A quick tip on maximizing points from equipment purchases. Keep it concise and actionable." },
+    { icon: Linkedin, label: "LinkedIn Post", color: "text-[#0077B5]", prompt: "Write a LinkedIn thought leadership post about how high-spending business owners are leaving hundreds of thousands of dollars on the table by using the wrong credit cards. Include a specific example of a construction company spending $185K/month. Make it engaging with a hook, insight, and call-to-action. Keep under 1300 characters." },
+    { icon: Sparkles, label: "Success Story", color: "text-luxury-gold", prompt: "Write a client success story about Marcus Chen, a construction CEO who spends $185,000/month across his business. Show how LuxuryAI helped him earn 4.2 million points in one year and take his family on a first-class trip to the Maldives. Include specific card recommendations and optimization strategies that led to this result." },
+  ];
+
+  const handleGenerate = async (prompt: string, label: string) => {
+    setActiveType(label);
+    setAiLoading(true);
+    setAiError(null);
+    setAiResponse(null);
+    const { result, error } = await askAI({ type: "content", prompt });
+    setAiLoading(false);
+    if (error) setAiError(error);
+    else setAiResponse(result ?? null);
+  };
+
   const statusConfig: Record<
     string,
     { badge: "success" | "warning" | "default"; icon: typeof Check }
@@ -102,23 +128,31 @@ export default function ContentPage() {
           Quick Generate
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { icon: Newspaper, label: "Travel Deal Article", color: "text-blue-400" },
-            { icon: Mail, label: "Newsletter", color: "text-emerald-400" },
-            { icon: Linkedin, label: "LinkedIn Post", color: "text-[#0077B5]" },
-            { icon: Sparkles, label: "Success Story", color: "text-luxury-gold" },
-          ].map((tool) => (
+          {contentTypes.map((tool) => (
             <button
               key={tool.label}
-              className="flex flex-col items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-luxury-gold/20 hover:bg-white/[0.04]"
+              onClick={() => handleGenerate(tool.prompt, tool.label)}
+              disabled={aiLoading}
+              className={`flex flex-col items-center gap-2.5 rounded-xl border p-4 transition-all hover:border-luxury-gold/20 hover:bg-white/[0.04] ${
+                activeType === tool.label && aiLoading
+                  ? "border-luxury-gold/30 bg-white/[0.04]"
+                  : "border-white/[0.06] bg-white/[0.02]"
+              } disabled:opacity-50`}
             >
               <tool.icon className={`h-6 w-6 ${tool.color}`} />
               <span className="text-xs font-medium text-platinum-300">
-                {tool.label}
+                {activeType === tool.label && aiLoading ? "Generating..." : tool.label}
               </span>
             </button>
           ))}
         </div>
+
+        <AIResponsePanel
+          response={aiResponse}
+          loading={aiLoading}
+          error={aiError}
+          onClose={() => { setAiResponse(null); setAiError(null); setActiveType(null); }}
+        />
       </GlassCard>
 
       {/* Content Pipeline */}

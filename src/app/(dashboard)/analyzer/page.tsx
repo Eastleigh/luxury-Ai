@@ -19,10 +19,32 @@ import {
 } from "lucide-react";
 import { spendCategories, categoryBreakdown, dashboardStats } from "@/data/mock";
 import { formatCurrency, useMounted } from "@/lib/utils";
+import { askAI } from "@/lib/ai";
+import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function AnalyzerPage() {
   const mounted = useMounted();
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const handleRunAnalysis = async () => {
+    setAiLoading(true);
+    setAiError(null);
+    setAiResponse(null);
+    const spendData = spendCategories.map(c => `${c.name}: $${c.amount.toLocaleString()}/mo on ${c.currentCard} (optimal: ${c.optimalCard}, missing $${c.missedReward.toLocaleString()}/mo)`).join("\n");
+    const { result, error } = await askAI({
+      type: "analyzer",
+      prompt: `Analyze my business spending and give me a comprehensive optimization report. Here are my current spending categories:\n${spendData}`,
+      context: "Business type: Construction/Contracting. Monthly spend: $185,000. Team size: 24 employees. Current cards: Amex Gold, Chase Sapphire, Capital One Venture, Personal Visa, Debit Card.",
+    });
+    setAiLoading(false);
+    if (error) setAiError(error);
+    else setAiResponse(result ?? null);
+  };
+
   const totalMissed = spendCategories.reduce((sum, c) => sum + c.missedReward, 0);
   const totalSpend = spendCategories.reduce((sum, c) => sum + c.amount, 0);
   const totalOptimalReward = spendCategories.reduce(
@@ -45,9 +67,9 @@ export default function AnalyzerPage() {
             optimization recommendations.
           </p>
         </div>
-        <Button variant="gold">
+        <Button variant="gold" onClick={handleRunAnalysis} disabled={aiLoading}>
           <Sparkles className="h-4 w-4" />
-          Run Full Analysis
+          {aiLoading ? "Analyzing..." : "Run Full Analysis"}
         </Button>
       </div>
 
@@ -94,6 +116,14 @@ export default function AnalyzerPage() {
           ))}
         </div>
       </GlassCard>
+
+      {/* AI Analysis Results */}
+      <AIResponsePanel
+        response={aiResponse}
+        loading={aiLoading}
+        error={aiError}
+        onClose={() => { setAiResponse(null); setAiError(null); }}
+      />
 
       {/* Loss Summary */}
       <motion.div

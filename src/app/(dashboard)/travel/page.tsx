@@ -21,12 +21,32 @@ import {
 } from "lucide-react";
 import { awardResults } from "@/data/mock";
 import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
+import { askAI } from "@/lib/ai";
+import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
 export default function TravelPage() {
   const mounted = useMounted();
   const [conciergeQuery, setConciergeQuery] = useState("");
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const handlePlanTrip = async () => {
+    if (!conciergeQuery.trim()) return;
+    setAiLoading(true);
+    setAiError(null);
+    setAiResponse(null);
+    const { result, error } = await askAI({
+      type: "travel",
+      prompt: conciergeQuery,
+      context: "User has 487,250 Amex MR points, 342,800 Chase UR points, 215,600 Capital One miles, 892,400 Hilton points, 445,000 Marriott points. Current transfer bonuses: Amex MR to Virgin Atlantic 30%, Chase UR to British Airways 25%, Amex MR to Hilton 40%.",
+    });
+    setAiLoading(false);
+    if (error) setAiError(error);
+    else setAiResponse(result ?? null);
+  };
 
   const cabinColors: Record<string, string> = {
     Business: "text-blue-400",
@@ -73,9 +93,9 @@ export default function TravelPage() {
             />
             <Send className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-platinum-500" />
           </div>
-          <Button variant="gold">
+          <Button variant="gold" onClick={handlePlanTrip} disabled={aiLoading || !conciergeQuery.trim()}>
             <Sparkles className="h-4 w-4" />
-            Plan Trip
+            {aiLoading ? "Planning..." : "Plan Trip"}
           </Button>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -94,6 +114,13 @@ export default function TravelPage() {
             </button>
           ))}
         </div>
+
+        <AIResponsePanel
+          response={aiResponse}
+          loading={aiLoading}
+          error={aiError}
+          onClose={() => { setAiResponse(null); setAiError(null); }}
+        />
       </GlassCard>
 
       {/* Search Stats */}
