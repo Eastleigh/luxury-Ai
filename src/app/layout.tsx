@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { Header } from "@/components/layout/Header";
 
 export const metadata: Metadata = {
   title: "LuxuryAI — AI-Powered Spending Optimization & Luxury Travel",
@@ -17,13 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="bg-[#0a0a0a] text-white antialiased">
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex flex-1 flex-col pl-[260px]">
-            <Header />
-            <main className="flex-1 p-6">{children}</main>
-          </div>
-        </div>
+        {children}
       </body>
     </html>
   );
