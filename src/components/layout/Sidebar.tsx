@@ -57,7 +57,7 @@ export function Sidebar() {
               className="flex flex-col"
             >
               <span className="text-base font-bold tracking-tight text-white">
-                Luxury<span className="gold-gradient">AI</span>
+                Mava<span className="gold-gradient">ree</span>
               </span>
               <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-platinum-500">
                 Spend Intelligence

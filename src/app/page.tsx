@@ -97,7 +97,7 @@ const testimonials = [
     name: "Marcus Chen",
     role: "CEO, BuildWright Construction",
     quote:
-      "We were leaving $185K in rewards on the table every year. LuxuryAI identified the right card setup and now my entire family flies business class — for free.",
+      "We were leaving $185K in rewards on the table every year. Mavaree identified the right card setup and now my entire family flies business class — for free.",
     spend: "$185,000/mo",
     points: "4.2M points",
     avatar: "MC",
@@ -204,7 +204,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2">
             <Crown className="h-6 w-6 text-luxury-gold" />
             <span className="text-xl font-bold">
-              Luxury<span className="gold-gradient">AI</span>
+              Mava<span className="gold-gradient">ree</span>
             </span>
           </div>
           <div className="hidden items-center gap-8 md:flex">
@@ -393,7 +393,7 @@ export default function LandingPage() {
               {
                 icon: Activity,
                 value: "38%",
-                label: "Average optimization rate before LuxuryAI",
+                label: "Average optimization rate before Mavaree",
                 color: "text-amber-400",
               },
               {
@@ -700,7 +700,7 @@ export default function LandingPage() {
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-lg text-platinum-400">
                 Join 2,400+ business owners who have unlocked $18.7M in rewards
-                with LuxuryAI.
+                with Mavaree.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
@@ -729,7 +729,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-2">
               <Crown className="h-5 w-5 text-luxury-gold" />
               <span className="font-bold">
-                Luxury<span className="gold-gradient">AI</span>
+                Mava<span className="gold-gradient">ree</span>
               </span>
               <span className="ml-2 text-sm text-platinum-500">
                 AI-Powered Spending Optimization
@@ -763,7 +763,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mt-8 border-t border-white/[0.06] pt-8 text-center text-xs text-platinum-600">
-            © 2025 LuxuryAI. All rights reserved. Not financial advice. Results
+            © 2025 Mavaree. All rights reserved. Not financial advice. Results
             may vary.
           </div>
         </div>
