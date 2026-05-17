@@ -18,11 +18,13 @@ import {
   Gem,
   Menu,
   X,
+  Building2,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/accounts", label: "Accounts", icon: Building2 },
   { href: "/analyzer", label: "Spend Analyzer", icon: BarChart3 },
   { href: "/optimizer", label: "Card Optimizer", icon: CreditCard },
   { href: "/travel", label: "Travel & Awards", icon: Plane },

@@ -4,6 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 
 const protectedRoutes = [
   "/dashboard",
+  "/accounts",
   "/analyzer",
   "/optimizer",
   "/travel",
@@ -61,6 +62,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
+    "/accounts/:path*",
     "/analyzer/:path*",
     "/optimizer/:path*",
     "/travel/:path*",

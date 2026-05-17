@@ -79,10 +79,12 @@ export default function AnalyzerPage() {
           <h2 className="text-base font-semibold text-white">
             Connected Accounts
           </h2>
-          <Button variant="secondary" size="sm">
-            <Link2 className="h-3 w-3" />
-            Connect New
-          </Button>
+          <a href="/accounts">
+            <Button variant="secondary" size="sm">
+              <Link2 className="h-3 w-3" />
+              Connect New
+            </Button>
+          </a>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[

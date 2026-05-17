@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
           user: { client_user_id: params.userId || "demo-user" },
           client_name: "Mavaree",
           products: ["transactions"],
-          country_codes: ["US"],
+          country_codes: ["US", "CA"],
           language: "en",
         });
         return NextResponse.json(data);
