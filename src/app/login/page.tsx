@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Crown, Loader2, Mail, Lock, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const { signIn, signInWithGoogle } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,7 +42,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
       <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/[0.03] via-transparent to-luxury-gold/[0.02]" />
 
-      <div className="relative w-full max-w-md px-6">
+      <div className="relative w-full max-w-md px-4 sm:px-6">
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Crown className="h-8 w-8 text-luxury-gold" />
