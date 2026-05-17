@@ -60,14 +60,22 @@ function buildWelcomeEmail(name: string): EmailTemplate {
   };
 }
 
-function buildWeeklyReportEmail(name: string, data: {
-  monthlySpend: number;
-  transactionCount: number;
-  topCategory: string;
-  topCategoryAmount: number;
-  connectedAccounts: number;
-  missedRewards: number;
+function buildWeeklyReportEmail(name: string, raw: {
+  monthlySpend?: number;
+  transactionCount?: number;
+  topCategory?: string;
+  topCategoryAmount?: number;
+  connectedAccounts?: number;
+  missedRewards?: number;
 }): EmailTemplate {
+  const data = {
+    monthlySpend: raw.monthlySpend ?? 0,
+    transactionCount: raw.transactionCount ?? 0,
+    topCategory: raw.topCategory ?? "N/A",
+    topCategoryAmount: raw.topCategoryAmount ?? 0,
+    connectedAccounts: raw.connectedAccounts ?? 0,
+    missedRewards: raw.missedRewards ?? 0,
+  };
   return {
     subject: `Mavaree Weekly Report - $${data.monthlySpend.toLocaleString()} tracked`,
     html: `
@@ -149,14 +157,7 @@ export async function POST(request: NextRequest) {
         template = buildWelcomeEmail(userName);
         break;
       case "weekly_report":
-        template = buildWeeklyReportEmail(userName, data || {
-          monthlySpend: 0,
-          transactionCount: 0,
-          topCategory: "N/A",
-          topCategoryAmount: 0,
-          connectedAccounts: 0,
-          missedRewards: 0,
-        });
+        template = buildWeeklyReportEmail(userName, data || {});
         break;
       case "alert":
         template = buildAlertEmail(userName, data?.alertType || "optimization", data?.details || "");
