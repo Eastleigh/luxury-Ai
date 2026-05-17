@@ -3,7 +3,7 @@
 import { cn, useMounted } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   BarChart3,
@@ -16,8 +16,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Gem,
+  Menu,
+  X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -33,16 +35,49 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const mounted = useMounted();
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
+
   return (
-    <motion.aside
+    <>
+      {/* Mobile hamburger button */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="fixed left-4 top-4 z-50 rounded-xl bg-[#0c0c0c] p-2 text-platinum-400 border border-white/[0.06] lg:hidden"
+        aria-label="Open menu"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeMobile}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <motion.aside
       initial={mounted ? { x: -20, opacity: 0 } : false}
       animate={{ x: 0, opacity: 1 }}
       className={cn(
-        "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-white/[0.06] bg-[#0c0c0c]",
+        "fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-white/[0.06] bg-[#0c0c0c]",
         "transition-all duration-300",
-        collapsed ? "w-[72px]" : "w-[260px]"
+        collapsed ? "lg:w-[72px]" : "lg:w-[260px]",
+        "w-[260px]",
+        mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
     >
       <div className="flex h-16 items-center justify-between px-4">
@@ -65,9 +100,17 @@ export function Sidebar() {
             </motion.div>
           )}
         </Link>
+        {/* Close button on mobile */}
+        <button
+          onClick={closeMobile}
+          className="rounded-lg p-1.5 text-platinum-500 hover:bg-white/5 hover:text-white transition-colors lg:hidden"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        {/* Collapse toggle on desktop */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="rounded-lg p-1.5 text-platinum-500 hover:bg-white/5 hover:text-white transition-colors"
+          className="hidden lg:block rounded-lg p-1.5 text-platinum-500 hover:bg-white/5 hover:text-white transition-colors"
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />
@@ -77,7 +120,7 @@ export function Sidebar() {
         </button>
       </div>
 
-      <nav className="mt-4 flex-1 space-y-1 px-3">
+      <nav className="mt-4 flex-1 space-y-1 px-3 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -136,5 +179,6 @@ export function Sidebar() {
         )}
       </div>
     </motion.aside>
+    </>
   );
 }

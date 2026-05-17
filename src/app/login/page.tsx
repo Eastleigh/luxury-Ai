@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Crown, Loader2, Mail, Lock, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const { signIn, signInWithGoogle } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export default function LoginPage() {
     if (error) {
       setError(error);
     } else {
-      router.push("/dashboard");
+      router.push(redirectTo);
     }
   };
 
@@ -149,14 +151,6 @@ export default function LoginPage() {
           </Link>
         </p>
 
-        <p className="mt-4 text-center text-sm text-platinum-400">
-          <Link
-            href="/dashboard"
-            className="text-platinum-500 hover:text-white"
-          >
-            Continue as guest →
-          </Link>
-        </p>
       </div>
     </div>
   );

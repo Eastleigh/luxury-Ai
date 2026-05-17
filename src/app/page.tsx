@@ -238,11 +238,16 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="fixed top-0 z-50 w-full border-b border-white/[0.06] bg-[#0a0a0a]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Crown className="h-6 w-6 text-luxury-gold" />
-            <span className="text-xl font-bold">
-              Mava<span className="gold-gradient">ree</span>
-            </span>
+            <div>
+              <span className="text-xl font-bold">
+                Mava<span className="gold-gradient">ree</span>
+              </span>
+              <p className="hidden sm:block text-[10px] text-platinum-400 leading-tight">
+                Financial optimization for business owners.
+              </p>
+            </div>
           </div>
           <div className="hidden items-center gap-8 md:flex">
             <a
@@ -307,15 +312,14 @@ export default function LandingPage() {
             </div>
 
             <h1 className="mx-auto max-w-5xl text-5xl font-bold leading-tight tracking-tight md:text-7xl">
-              Stop Leaving{" "}
-              <span className="gold-gradient">$100K+ in Rewards</span> on the
-              Table
+              You Spend Millions.{" "}
+              <span className="gold-gradient">You Should Be Getting More Back.</span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg text-platinum-400 md:text-xl">
-              AI-powered spending optimization and luxury travel automation for
-              business owners spending $20K–$500K/month. Not travel hacking —{" "}
-              <span className="text-white">financial optimization.</span>
+              AI-powered financial optimization for business owners spending
+              $20K–$500K/month. We find the rewards you&apos;re already owed —{" "}
+              <span className="text-white">luxury travel is just the payoff.</span>
             </p>
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">

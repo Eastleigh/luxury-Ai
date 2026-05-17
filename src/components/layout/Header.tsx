@@ -16,21 +16,22 @@ export function Header() {
     <motion.header
       initial={mounted ? { y: -10, opacity: 0 } : false}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/[0.06] bg-[#0a0a0a]/80 px-6 backdrop-blur-xl"
+      className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/[0.06] bg-[#0a0a0a]/80 px-4 pl-14 lg:pl-6 lg:px-6 backdrop-blur-xl"
     >
-      <div className="flex items-center gap-4">
+      <div className="hidden md:flex items-center gap-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-platinum-500" />
           <input
             type="text"
             placeholder="Search points, flights, cards..."
-            className="h-9 w-80 rounded-xl border border-white/[0.06] bg-white/[0.03] pl-10 pr-4 text-sm text-white placeholder-platinum-500 outline-none transition-all focus:border-luxury-gold/30 focus:ring-1 focus:ring-luxury-gold/20"
+            className="h-9 w-64 lg:w-80 rounded-xl border border-white/[0.06] bg-white/[0.03] pl-10 pr-4 text-sm text-white placeholder-platinum-500 outline-none transition-all focus:border-luxury-gold/30 focus:ring-1 focus:ring-luxury-gold/20"
           />
           <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-platinum-500">
             /
           </kbd>
         </div>
       </div>
+      <div className="md:hidden" />
 
       <div className="flex items-center gap-2">
         <button className="relative rounded-xl p-2 text-platinum-400 transition-colors hover:bg-white/5 hover:text-white">

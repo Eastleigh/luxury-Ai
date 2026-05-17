@@ -256,9 +256,9 @@ export default function TravelPage() {
               transition={{ delay: 0.5 + i * 0.05 }}
               className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-luxury-gold/20 hover:bg-white/[0.04]"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.04]">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/[0.04] flex-shrink-0">
                     <Plane className="h-5 w-5 text-luxury-gold" />
                   </div>
                   <div>
@@ -283,7 +283,7 @@ export default function TravelPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="grid grid-cols-3 gap-3 sm:flex sm:items-center sm:gap-6">
                   <div className="text-center">
                     <p className="text-[10px] text-platinum-500">Cabin</p>
                     <p
@@ -321,7 +321,7 @@ export default function TravelPage() {
                   <Button
                     variant="secondary"
                     size="sm"
-                    className="opacity-0 transition-opacity group-hover:opacity-100"
+                    className="sm:opacity-0 transition-opacity group-hover:opacity-100"
                   >
                     Book
                     <ArrowUpRight className="h-3 w-3" />
