@@ -10,12 +10,41 @@ import {
   Shield,
   Zap,
   ArrowRight,
+  Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn, useMounted } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
+import { useState } from "react";
 
 export default function PricingPage() {
   const mounted = useMounted();
+  const { user } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (planKey: string) => {
+    if (planKey === "free") return;
+    setLoadingPlan(planKey);
+    try {
+      const res = await fetch("/api/stripe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planKey, email: user?.email }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Failed to start checkout");
+      }
+    } catch {
+      alert("Failed to connect to payment system");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  const planKeys = ["free", "professional", "executive"];
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -101,9 +130,14 @@ export default function PricingPage() {
               variant={tier.highlighted ? "gold" : i === 2 ? "secondary" : "secondary"}
               size="lg"
               className="mt-6 w-full"
+              onClick={() => handleSubscribe(planKeys[i])}
+              disabled={loadingPlan === planKeys[i]}
             >
-              {tier.cta}
-              <ArrowRight className="h-4 w-4" />
+              {loadingPlan === planKeys[i] ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Processing...</>
+              ) : (
+                <>{tier.cta} <ArrowRight className="h-4 w-4" /></>
+              )}
             </Button>
           </motion.div>
         ))}

@@ -235,13 +235,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              href="/dashboard"
+              href="/login"
               className="text-sm text-platinum-400 transition-colors hover:text-white"
             >
               Log In
             </Link>
             <Link
-              href="/dashboard"
+              href="/signup"
               className="rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-[#e0c992]"
             >
               Get Started

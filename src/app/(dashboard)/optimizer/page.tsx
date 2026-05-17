@@ -17,6 +17,7 @@ import { creditCards } from "@/data/mock";
 import { formatCurrency, useMounted } from "@/lib/utils";
 import { askAI } from "@/lib/ai";
 import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
+import { getAffiliateUrl } from "@/lib/affiliates";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -223,14 +224,21 @@ export default function OptimizerPage() {
                 </div>
               )}
 
-              <Button
-                variant={card.recommended ? "gold" : "secondary"}
-                size="sm"
-                className="mt-4 w-full"
+              <a
+                href={getAffiliateUrl(card.name) || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 block"
               >
-                {card.recommended ? "Apply Now" : "Learn More"}
-                <ArrowUpRight className="h-3 w-3" />
-              </Button>
+                <Button
+                  variant={card.recommended ? "gold" : "secondary"}
+                  size="sm"
+                  className="w-full"
+                >
+                  {card.recommended ? "Apply Now" : "Learn More"}
+                  <ArrowUpRight className="h-3 w-3" />
+                </Button>
+              </a>
             </motion.div>
           ))}
         </div>
