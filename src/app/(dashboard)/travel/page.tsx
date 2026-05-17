@@ -97,6 +97,8 @@ export default function TravelPage() {
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [alertSet, setAlertSet] = useState(false);
 
   const displayResults = hasSearched ? searchResults : mockAwardResults;
 
@@ -284,13 +286,17 @@ export default function TravelPage() {
             Award Search Engine
           </h2>
           <div className="flex gap-2">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => setShowFilters(!showFilters)}>
               <Filter className="h-3 w-3" />
               Filters
             </Button>
-            <Button variant="secondary" size="sm">
+            <Button
+              variant={alertSet ? "gold" : "secondary"}
+              size="sm"
+              onClick={() => setAlertSet(!alertSet)}
+            >
               <Clock className="h-3 w-3" />
-              Set Alert
+              {alertSet ? "Alert On" : "Set Alert"}
             </Button>
           </div>
         </div>
@@ -476,6 +482,10 @@ export default function TravelPage() {
                     variant="secondary"
                     size="sm"
                     className="sm:opacity-0 transition-opacity group-hover:opacity-100"
+                    onClick={() => {
+                      const query = encodeURIComponent(`${result.airline} ${result.route} ${result.cabin} class award booking`);
+                      window.open(`https://www.google.com/search?q=${query}`, "_blank");
+                    }}
                   >
                     Book
                     <ArrowUpRight className="h-3 w-3" />

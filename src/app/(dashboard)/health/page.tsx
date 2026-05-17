@@ -20,9 +20,11 @@ import {
 import { healthAlerts, transferBonuses, pointsPrograms } from "@/data/mock";
 import { formatPoints, formatCurrency, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function HealthPage() {
   const mounted = useMounted();
+  const [showAlertSettings, setShowAlertSettings] = useState(false);
   const criticalCount = healthAlerts.filter(
     (a) => a.severity === "critical"
   ).length;
@@ -73,11 +75,36 @@ export default function HealthPage() {
             inflation across all your programs.
           </p>
         </div>
-        <Button variant="gold">
+        <Button variant="gold" onClick={() => setShowAlertSettings(!showAlertSettings)}>
           <Bell className="h-4 w-4" />
           Alert Settings
         </Button>
       </div>
+
+      {showAlertSettings && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-luxury-gold/20 bg-luxury-gold/[0.03] p-5"
+        >
+          <h3 className="text-sm font-semibold text-white">Alert Preferences</h3>
+          <p className="mt-1 text-xs text-platinum-400">Configure how and when you receive points health notifications.</p>
+          <div className="mt-4 space-y-3">
+            {[
+              { label: "Expiring points (30 days before)", defaultChecked: true },
+              { label: "Transfer bonus alerts", defaultChecked: true },
+              { label: "Devaluation warnings", defaultChecked: true },
+              { label: "Weekly health digest email", defaultChecked: false },
+            ].map((pref) => (
+              <label key={pref.label} className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2">
+                <span className="text-xs text-platinum-300">{pref.label}</span>
+                <input type="checkbox" defaultChecked={pref.defaultChecked} className="h-4 w-4 rounded accent-luxury-gold" />
+              </label>
+            ))}
+          </div>
+          <p className="mt-3 text-[10px] text-platinum-500">Email notifications will be sent to your account email. SMS alerts available on Executive plan.</p>
+        </motion.div>
+      )}
 
       {/* Health Score */}
       <motion.div
@@ -244,7 +271,15 @@ export default function HealthPage() {
                         </span>
                       )}
                       {alert.actionRequired && (
-                        <Button variant="secondary" size="sm">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => {
+                            if (alert.type === "bonus") window.location.href = "/travel";
+                            else if (alert.type === "expiry") window.location.href = "/accounts";
+                            else window.location.href = "/optimizer";
+                          }}
+                        >
                           Take Action
                           <ArrowUpRight className="h-3 w-3" />
                         </Button>
@@ -289,7 +324,12 @@ export default function HealthPage() {
                   <ArrowRightLeft className="inline h-3 w-3 text-luxury-gold" />{" "}
                   {bonus.to}
                 </p>
-                <Button variant="ghost" size="sm" className="mt-2 w-full">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 w-full"
+                  onClick={() => window.location.href = "/travel"}
+                >
                   Transfer Now
                   <ArrowUpRight className="h-3 w-3" />
                 </Button>

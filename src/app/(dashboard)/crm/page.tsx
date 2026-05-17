@@ -25,9 +25,12 @@ import {
 import { clients, affiliateLinks } from "@/data/mock";
 import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function CrmPage() {
   const mounted = useMounted();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAddClient, setShowAddClient] = useState(false);
   const totalManagedSpend = clients.reduce((s, c) => s + c.monthlySpend, 0);
   const totalTrips = clients.reduce((s, c) => s + c.trips, 0);
   const totalAffRevenue = affiliateLinks.reduce((s, a) => s + a.revenue, 0);
@@ -50,16 +53,36 @@ export default function CrmPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary">
+          <Button variant="secondary" onClick={() => window.location.href = "/admin"}>
             <BarChart3 className="h-4 w-4" />
             Reports
           </Button>
-          <Button variant="gold">
+          <Button variant="gold" onClick={() => setShowAddClient(!showAddClient)}>
             <UserPlus className="h-4 w-4" />
             Add Client
           </Button>
         </div>
       </div>
+
+      {showAddClient && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-luxury-gold/20 bg-luxury-gold/[0.03] p-5"
+        >
+          <h3 className="text-sm font-semibold text-white">Add New Client</h3>
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <input placeholder="Full Name" className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-platinum-500 outline-none focus:border-luxury-gold/30" />
+            <input placeholder="Company" className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-platinum-500 outline-none focus:border-luxury-gold/30" />
+            <input placeholder="Email" type="email" className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-platinum-500 outline-none focus:border-luxury-gold/30" />
+          </div>
+          <div className="mt-3 flex gap-2">
+            <Button variant="gold" size="sm" onClick={() => setShowAddClient(false)}>Save Client</Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowAddClient(false)}>Cancel</Button>
+          </div>
+          <p className="mt-2 text-[10px] text-platinum-500">Client data will be stored locally. Connect to a CRM backend for persistent storage.</p>
+        </motion.div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -110,12 +133,14 @@ export default function CrmPage() {
               <input
                 type="text"
                 placeholder="Search clients..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-8 w-56 rounded-lg border border-white/[0.06] bg-white/[0.03] pl-9 pr-3 text-xs text-white placeholder-platinum-500 outline-none focus:border-luxury-gold/30"
               />
             </div>
           </div>
 
-          {clients.map((client, i) => (
+          {clients.filter(c => !searchQuery || c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.company.toLowerCase().includes(searchQuery.toLowerCase())).map((client, i) => (
             <motion.div
               key={client.id}
               initial={mounted ? { opacity: 0, y: 10 } : false}

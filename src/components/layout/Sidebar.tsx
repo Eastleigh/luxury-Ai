@@ -22,6 +22,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "@/lib/auth-context";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -41,6 +42,13 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const mounted = useMounted();
+  const { user } = useAuth();
+
+  const getPlanInfo = () => {
+    if (!user) return { name: "Explorer", label: "Free Plan", progress: 100, detail: "Upgrade for full access" };
+    return { name: "Professional", label: "Active", progress: 75, detail: "Renews monthly" };
+  };
+  const planInfo = getPlanInfo();
 
   useEffect(() => {
     setMobileOpen(false);
@@ -168,18 +176,20 @@ export function Sidebar() {
 
       <div className="border-t border-white/[0.06] p-3">
         {!collapsed && (
-          <div className="glass rounded-xl p-3">
-            <p className="text-[10px] font-medium uppercase tracking-wider text-platinum-500">
-              Current Plan
-            </p>
-            <p className="mt-1 text-sm font-semibold text-white">Professional</p>
-            <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/5">
-              <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-luxury-gold to-[#e0c992]" />
+          <Link href="/pricing" className="block">
+            <div className="glass rounded-xl p-3 transition-colors hover:bg-white/[0.04]">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-platinum-500">
+                Current Plan
+              </p>
+              <p className="mt-1 text-sm font-semibold text-white">{planInfo.name}</p>
+              <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/5">
+                <div className="h-full rounded-full bg-gradient-to-r from-luxury-gold to-[#e0c992]" style={{ width: `${planInfo.progress}%` }} />
+              </div>
+              <p className="mt-1.5 text-[10px] text-platinum-500">
+                {planInfo.detail}
+              </p>
             </div>
-            <p className="mt-1.5 text-[10px] text-platinum-500">
-              18 of 24 days remaining
-            </p>
-          </div>
+          </Link>
         )}
       </div>
     </motion.aside>

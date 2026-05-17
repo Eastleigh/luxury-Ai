@@ -24,6 +24,8 @@ import {
   Target,
   Award,
   Bot,
+  Menu,
+  X,
 } from "lucide-react";
 
 const features = [
@@ -207,10 +209,11 @@ const planKeys = ["free", "professional", "executive"];
 export default function LandingPage() {
   const mounted = useMounted();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSubscribe = async (planKey: string) => {
     if (planKey === "free") {
-      window.location.href = "/dashboard";
+      window.location.href = "/signup";
       return;
     }
     setLoadingPlan(planKey);
@@ -278,18 +281,50 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="text-sm text-platinum-400 transition-colors hover:text-white"
+              className="hidden sm:block text-sm text-platinum-400 transition-colors hover:text-white"
             >
               Log In
             </Link>
             <Link
               href="/signup"
-              className="rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-[#e0c992]"
+              className="hidden sm:block rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-[#e0c992]"
             >
               Get Started
             </Link>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden rounded-lg p-2 text-platinum-400 hover:bg-white/5 hover:text-white"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:hidden border-t border-white/[0.06] bg-[#0a0a0a]/95 backdrop-blur-xl px-6 py-4 space-y-3"
+          >
+            {["Features", "How It Works", "Results", "Pricing"].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase().replace(/ /g, "-")}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-sm text-platinum-400 transition-colors hover:text-white py-1"
+              >
+                {item}
+              </a>
+            ))}
+            <div className="flex gap-3 pt-2 border-t border-white/[0.06]">
+              <Link href="/login" className="flex-1 text-center rounded-lg border border-white/10 px-4 py-2 text-sm text-white hover:bg-white/5">
+                Log In
+              </Link>
+              <Link href="/signup" className="flex-1 text-center rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-black hover:bg-[#e0c992]">
+                Get Started
+              </Link>
+            </div>
+          </motion.div>
+        )}
       </nav>
 
       {/* Hero Section */}
@@ -324,7 +359,7 @@ export default function LandingPage() {
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/dashboard"
+                href="/signup"
                 className="group flex items-center gap-2 rounded-xl bg-luxury-gold px-8 py-4 text-lg font-semibold text-black transition-all hover:bg-[#e0c992] hover:shadow-luxury-lg"
               >
                 Start Optimizing Free
@@ -759,7 +794,7 @@ export default function LandingPage() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/dashboard"
+                  href="/signup"
                   className="group flex items-center gap-2 rounded-xl bg-luxury-gold px-8 py-4 text-lg font-semibold text-black transition-all hover:bg-[#e0c992]"
                 >
                   Start Optimizing Free
@@ -810,15 +845,15 @@ export default function LandingPage() {
                 Results
               </a>
               <Link
-                href="/dashboard"
+                href="/signup"
                 className="text-sm text-platinum-500 transition-colors hover:text-white"
               >
-                Dashboard
+                Get Started
               </Link>
             </div>
           </div>
           <div className="mt-8 border-t border-white/[0.06] pt-8 text-center text-xs text-platinum-600">
-            © 2025 Mavaree. All rights reserved. Not financial advice. Results
+            © 2026 Mavaree. All rights reserved. Not financial advice. Results
             may vary.
           </div>
         </div>

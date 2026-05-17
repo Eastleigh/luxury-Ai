@@ -72,11 +72,17 @@ export default function ContentPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary">
+          <Button variant="secondary" onClick={() => {
+            const el = document.getElementById("content-pipeline");
+            el?.scrollIntoView({ behavior: "smooth" });
+          }}>
             <PenTool className="h-4 w-4" />
             Create Manual
           </Button>
-          <Button variant="gold">
+          <Button variant="gold" onClick={() => {
+            const el = document.getElementById("quick-generate");
+            el?.scrollIntoView({ behavior: "smooth" });
+          }}>
             <Sparkles className="h-4 w-4" />
             Generate Content
           </Button>
@@ -124,7 +130,7 @@ export default function ContentPage() {
 
       {/* Content Generation Tools */}
       <GlassCard delay={0.3}>
-        <h2 className="text-base font-semibold text-white">
+        <h2 id="quick-generate" className="text-base font-semibold text-white">
           Quick Generate
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -158,7 +164,7 @@ export default function ContentPage() {
       {/* Content Pipeline */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-white">
+          <h2 id="content-pipeline" className="text-base font-semibold text-white">
             Content Pipeline
           </h2>
           <div className="flex gap-2">
@@ -232,18 +238,18 @@ export default function ContentPage() {
                   </div>
                   <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                     {article.status === "draft" && (
-                      <Button variant="secondary" size="sm">
+                      <Button variant="secondary" size="sm" onClick={() => handleGenerate(`Review and improve this article draft: "${article.title}" - ${article.excerpt}. Provide editorial feedback and a polished version.`, "Review")}>
                         <Eye className="h-3 w-3" />
                         Review
                       </Button>
                     )}
                     {article.status === "review" && (
-                      <Button variant="gold" size="sm">
+                      <Button variant="gold" size="sm" onClick={() => handleGenerate(`Finalize this article for publication: "${article.title}" - ${article.excerpt}. Write the final polished version ready for publishing.`, "Publish")}>
                         <Send className="h-3 w-3" />
                         Publish
                       </Button>
                     )}
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => handleGenerate(`Rewrite and improve this article: "${article.title}" - ${article.excerpt}. Make it more engaging, professional, and SEO-optimized.`, "Edit")}>
                       <Edit3 className="h-3 w-3" />
                       Edit
                     </Button>

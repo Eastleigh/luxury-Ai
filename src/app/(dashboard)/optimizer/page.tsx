@@ -89,7 +89,7 @@ export default function OptimizerPage() {
               additional rewards.
             </p>
           </div>
-          <Button variant="secondary" size="sm">
+          <Button variant="secondary" size="sm" onClick={handleGetRecommendations} disabled={aiLoading}>
             Apply
             <ArrowUpRight className="h-3 w-3" />
           </Button>
