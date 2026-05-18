@@ -69,6 +69,41 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    // Signup trends (last 30 days, grouped by day)
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const signupTrends: { date: string; count: number }[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const dateStr = d.toISOString().split("T")[0];
+      const count = users.filter((u) => u.created_at?.startsWith(dateStr)).length;
+      signupTrends.push({ date: dateStr, count });
+    }
+
+    // Active users (signed in within last 7 days)
+    const activeUsers = users.filter(
+      (u) => u.last_sign_in && new Date(u.last_sign_in) > sevenDaysAgo
+    ).length;
+
+    // Recent activity feed
+    const recentActivity = [
+      ...users.slice(0, 10).map((u) => ({
+        type: "signup" as const,
+        user: u.full_name || u.email.split("@")[0],
+        detail: u.plan !== "free" ? `Signed up (${u.plan})` : "Signed up (free)",
+        timestamp: u.created_at,
+      })),
+      ...(accounts || []).slice(0, 5).map((a) => ({
+        type: "bank_connect" as const,
+        user: users.find((u) => u.id === a.user_id)?.full_name || "Unknown",
+        detail: `Connected ${a.institution_name || "bank account"}`,
+        timestamp: a.connected_at,
+      })),
+    ]
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 15);
+
     const stats = {
       totalUsers: users.length,
       proUsers: users.filter((u) => u.plan === "professional").length,
@@ -76,11 +111,18 @@ export async function GET(request: NextRequest) {
       freeUsers: users.filter((u) => u.plan === "free").length,
       connectedBanks: (accounts || []).length,
       mrr:
-        users.filter((u) => u.plan === "professional").length * 79 +
+        users.filter((u) => u.plan === "professional").length * 99 +
         users.filter((u) => u.plan === "executive").length * 499,
+      activeUsers,
+      signupsLast7Days: users.filter(
+        (u) => u.created_at && new Date(u.created_at) > sevenDaysAgo
+      ).length,
+      signupsLast30Days: users.filter(
+        (u) => u.created_at && new Date(u.created_at) > thirtyDaysAgo
+      ).length,
     };
 
-    return NextResponse.json({ users, stats });
+    return NextResponse.json({ users, stats, signupTrends, recentActivity });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("Admin API error:", message);
