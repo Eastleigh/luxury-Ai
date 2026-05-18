@@ -26,6 +26,7 @@ import {
 } from "@/data/mock";
 import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
 import { useSpendingData } from "@/lib/use-spending-data";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -70,6 +71,16 @@ export default function DashboardPage() {
           </Button>
         </Link>
       </div>
+
+      {!spending.hasRealData && (
+        <EmptyState
+          icon={CreditCard}
+          title="Connect Your Accounts"
+          description="Link your bank accounts and credit cards to see real spending data, personalized optimization, and accurate rewards tracking."
+          actionLabel="Connect Accounts"
+          actionHref="/accounts"
+        />
+      )}
 
       {/* Loss Alert Banner */}
       <motion.div

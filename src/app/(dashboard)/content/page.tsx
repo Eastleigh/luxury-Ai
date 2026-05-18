@@ -25,10 +25,12 @@ import { motion } from "framer-motion";
 import { useMounted } from "@/lib/utils";
 import { askAI } from "@/lib/ai";
 import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
+import { useToast } from "@/components/ui/Toast";
 import { useState } from "react";
 
 export default function ContentPage() {
   const mounted = useMounted();
+  const { toast } = useToast();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -48,8 +50,13 @@ export default function ContentPage() {
     setAiResponse(null);
     const { result, error } = await askAI({ type: "content", prompt });
     setAiLoading(false);
-    if (error) setAiError(error);
-    else setAiResponse(result ?? null);
+    if (error) {
+      setAiError(error);
+      toast(error, "error");
+    } else {
+      setAiResponse(result ?? null);
+      toast(`${label} generated`, "success");
+    }
   };
 
   const statusConfig: Record<

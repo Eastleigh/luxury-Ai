@@ -24,11 +24,13 @@ import {
 } from "lucide-react";
 import { clients, affiliateLinks } from "@/data/mock";
 import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
+import { useToast } from "@/components/ui/Toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
 export default function CrmPage() {
   const mounted = useMounted();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddClient, setShowAddClient] = useState(false);
   const totalManagedSpend = clients.reduce((s, c) => s + c.monthlySpend, 0);
@@ -77,7 +79,7 @@ export default function CrmPage() {
             <input placeholder="Email" type="email" className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-platinum-500 outline-none focus:border-luxury-gold/30" />
           </div>
           <div className="mt-3 flex gap-2">
-            <Button variant="gold" size="sm" onClick={() => setShowAddClient(false)}>Save Client</Button>
+            <Button variant="gold" size="sm" onClick={() => { setShowAddClient(false); toast("Client added successfully", "success"); }}>Save Client</Button>
             <Button variant="ghost" size="sm" onClick={() => setShowAddClient(false)}>Cancel</Button>
           </div>
           <p className="mt-2 text-[10px] text-platinum-500">Client data will be stored locally. Connect to a CRM backend for persistent storage.</p>

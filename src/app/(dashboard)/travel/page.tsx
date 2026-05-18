@@ -24,6 +24,7 @@ import { awardResults as mockAwardResults } from "@/data/mock";
 import { formatCurrency, formatPoints, useMounted } from "@/lib/utils";
 import { askAI } from "@/lib/ai";
 import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
+import { useToast } from "@/components/ui/Toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -84,6 +85,7 @@ function parseSeatsAeroResults(data: Record<string, unknown>): AwardResult[] {
 
 export default function TravelPage() {
   const mounted = useMounted();
+  const { toast } = useToast();
   const [conciergeQuery, setConciergeQuery] = useState("");
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
@@ -113,8 +115,13 @@ export default function TravelPage() {
       context: "User has 487,250 Amex MR points, 342,800 Chase UR points, 215,600 Capital One miles, 892,400 Hilton points, 445,000 Marriott points. Current transfer bonuses: Amex MR to Virgin Atlantic 30%, Chase UR to British Airways 25%, Amex MR to Hilton 40%.",
     });
     setAiLoading(false);
-    if (error) setAiError(error);
-    else setAiResponse(result ?? null);
+    if (error) {
+      setAiError(error);
+      toast(error, "error");
+    } else {
+      setAiResponse(result ?? null);
+      toast("Trip plan generated", "success");
+    }
   };
 
   const handleSearch = async () => {
@@ -293,7 +300,7 @@ export default function TravelPage() {
             <Button
               variant={alertSet ? "gold" : "secondary"}
               size="sm"
-              onClick={() => setAlertSet(!alertSet)}
+              onClick={() => { setAlertSet(!alertSet); toast(alertSet ? "Alert removed" : "Price alert set", alertSet ? "info" : "success"); }}
             >
               <Clock className="h-3 w-3" />
               {alertSet ? "Alert On" : "Set Alert"}

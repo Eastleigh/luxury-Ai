@@ -23,6 +23,8 @@ import {
 } from "@/data/mock";
 import { formatCurrency, useMounted } from "@/lib/utils";
 import { useSpendingData } from "@/lib/use-spending-data";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { useToast } from "@/components/ui/Toast";
 import { askAI } from "@/lib/ai";
 import { AIResponsePanel } from "@/components/ui/AIResponsePanel";
 import { motion } from "framer-motion";
@@ -31,6 +33,7 @@ import { useState } from "react";
 export default function AnalyzerPage() {
   const mounted = useMounted();
   const spending = useSpendingData();
+  const { toast } = useToast();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -57,8 +60,13 @@ export default function AnalyzerPage() {
         : "Business type: Construction/Contracting. Monthly spend: $185,000. Team size: 24 employees. Current cards: Amex Gold, Chase Sapphire, Capital One Venture, Personal Visa, Debit Card.",
     });
     setAiLoading(false);
-    if (error) setAiError(error);
-    else setAiResponse(result ?? null);
+    if (error) {
+      setAiError(error);
+      toast(error, "error");
+    } else {
+      setAiResponse(result ?? null);
+      toast("Analysis complete", "success");
+    }
   };
 
   const totalMissed = spendCategories.reduce((sum, c) => sum + c.missedReward, 0);
@@ -102,9 +110,9 @@ export default function AnalyzerPage() {
             </Button>
           </a>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {spending.hasRealData ? (
-            spending.connectedAccounts.map((account) => (
+        {spending.hasRealData ? (
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {spending.connectedAccounts.map((account) => (
               <div
                 key={account.id}
                 className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3"
@@ -119,39 +127,19 @@ export default function AnalyzerPage() {
                   </Badge>
                 </div>
               </div>
-            ))
-          ) : (
-            [
-              { name: "American Express", status: "connected", color: "#006FCF", cards: 3 },
-              { name: "Chase", status: "connected", color: "#1A4480", cards: 2 },
-              { name: "Capital One", status: "connected", color: "#D03027", cards: 1 },
-              { name: "Bank Account", status: "pending", color: "#808080", cards: 0 },
-            ].map((account) => (
-              <div
-                key={account.name}
-                className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3"
-              >
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: `${account.color}20` }}
-                >
-                  <CreditCard className="h-5 w-5" style={{ color: account.color }} />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-white">{account.name}</p>
-                  <Badge
-                    variant={account.status === "connected" ? "success" : "warning"}
-                    size="sm"
-                  >
-                    {account.status === "connected"
-                      ? `${account.cards} cards`
-                      : "Connect"}
-                  </Badge>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4">
+            <EmptyState
+              icon={CreditCard}
+              title="No Accounts Connected"
+              description="Connect your bank accounts and credit cards to get AI-powered spending analysis with real transaction data."
+              actionLabel="Connect Accounts"
+              actionHref="/accounts"
+            />
+          </div>
+        )}
       </GlassCard>
 
       {/* AI Analysis Results */}

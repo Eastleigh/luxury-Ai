@@ -19,11 +19,13 @@ import {
 } from "lucide-react";
 import { healthAlerts, transferBonuses, pointsPrograms } from "@/data/mock";
 import { formatPoints, formatCurrency, useMounted } from "@/lib/utils";
+import { useToast } from "@/components/ui/Toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
 export default function HealthPage() {
   const mounted = useMounted();
+  const { toast } = useToast();
   const [showAlertSettings, setShowAlertSettings] = useState(false);
   const criticalCount = healthAlerts.filter(
     (a) => a.severity === "critical"
@@ -101,6 +103,10 @@ export default function HealthPage() {
                 <input type="checkbox" defaultChecked={pref.defaultChecked} className="h-4 w-4 rounded accent-luxury-gold" />
               </label>
             ))}
+          </div>
+          <div className="mt-4 flex gap-2">
+            <Button variant="gold" size="sm" onClick={() => { setShowAlertSettings(false); toast("Alert preferences saved", "success"); }}>Save Preferences</Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowAlertSettings(false)}>Cancel</Button>
           </div>
           <p className="mt-3 text-[10px] text-platinum-500">Email notifications will be sent to your account email. SMS alerts available on Executive plan.</p>
         </motion.div>
