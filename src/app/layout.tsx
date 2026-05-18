@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: "Mavaree",
-    title: "Mavaree — You Spend Millions. You Should Be Getting More Back.",
+    title: "Mavaree — You Spend Thousands Every Month. We Help You Get More Back.",
     description:
       "AI-powered spending optimization for business owners in the US & Canada. We find the rewards you're already owed — luxury travel is just the payoff.",
     images: [
@@ -99,14 +99,14 @@ export default function RootLayout({
               offers: [
                 {
                   "@type": "Offer",
-                  name: "Explorer",
+                  name: "Free Audit",
                   price: "0",
                   priceCurrency: "USD",
                 },
                 {
                   "@type": "Offer",
-                  name: "Professional",
-                  price: "79",
+                  name: "Pro",
+                  price: "99",
                   priceCurrency: "USD",
                   billingIncrement: "P1M",
                 },

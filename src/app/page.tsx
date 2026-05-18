@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useMounted } from "@/lib/utils";
 import Link from "next/link";
@@ -10,22 +10,19 @@ import {
   TrendingUp,
   Shield,
   BarChart3,
-  Sparkles,
   ArrowRight,
   Check,
   Star,
-  Users,
   DollarSign,
-  Globe,
-  PenTool,
   Crown,
   ChevronRight,
-  Activity,
-  Target,
-  Award,
   Bot,
   Menu,
   X,
+  Bell,
+  Lock,
+  Banknote,
+  Calculator,
 } from "lucide-react";
 
 const features = [
@@ -33,183 +30,168 @@ const features = [
     icon: BarChart3,
     title: "AI Spend Analyzer",
     description:
-      "Connect your Amex, Chase, and Capital One accounts. AI identifies missed rewards, inefficient spend, and optimization opportunities across every category.",
-    stat: "$121K",
-    statLabel: "avg. annual rewards recovered",
+      "Connect your Amex, Chase, and Capital One accounts. Our AI identifies missed category rewards, inefficient spend, and optimization opportunities across every transaction.",
   },
   {
     icon: CreditCard,
-    title: "AI Card Optimizer",
+    title: "Card Optimization Engine",
     description:
-      "Dynamic card recommendations based on your business type, spending patterns, and travel goals. From signup bonuses to category multipliers.",
-    stat: "5x",
-    statLabel: "reward multiplier potential",
-  },
-  {
-    icon: Plane,
-    title: "AI Travel Concierge",
-    description:
-      'Type "Family trip to Italy in business class" and our AI scans award availability, checks partners, and finds the best redemption routes.',
-    stat: "8.5cpp",
-    statLabel: "best value per point found",
-  },
-  {
-    icon: Globe,
-    title: "Award Search Engine",
-    description:
-      "Search award availability across airlines and hotels. Flexible dates, transfer partner support, and real-time alerts when seats open up.",
-    stat: "2,847",
-    statLabel: "awards scanned live",
+      "Dynamic card recommendations based on your business type, spending patterns, and travel goals. From signup bonuses to category multipliers \u2014 always the right card for the right purchase.",
   },
   {
     icon: Shield,
     title: "Points Health Monitor",
     description:
-      "Track expiring points, devaluation risks, and transfer bonuses. Get alerts before your points lose value or bonuses expire.",
-    stat: "72",
-    statLabel: "health score out of 100",
+      "Track expiring points, devaluation risks, and transfer bonuses across all your loyalty programs. Get alerts before your points lose value or bonuses expire.",
   },
   {
-    icon: PenTool,
-    title: "AI Content Engine",
+    icon: Plane,
+    title: "Award Travel Search",
     description:
-      "Auto-generate travel deal articles, reward alerts, newsletters, and LinkedIn posts. Review and publish with one click.",
-    stat: "47",
-    statLabel: "articles generated this month",
+      "Search award availability across airlines and hotels. Flexible dates, transfer partner support, and real-time alerts when business or first class seats open up.",
   },
   {
-    icon: Target,
-    title: "Affiliate Revenue Engine",
+    icon: Bell,
+    title: "Transfer Bonus Alerts",
     description:
-      "Intelligently insert affiliate recommendations for cards, hotels, and travel insurance. Track clicks, conversions, and revenue.",
-    stat: "$164K",
-    statLabel: "affiliate revenue tracked",
+      "Real-time notifications when transfer bonuses appear \u2014 like \u201c30% Amex to Virgin bonus ends Friday.\u201d Never miss a limited-time opportunity to stretch your points further.",
   },
   {
-    icon: Users,
-    title: "CRM & Client Management",
+    icon: Crown,
+    title: "Executive Travel Concierge",
     description:
-      "Manage clients, track trip planning, reward optimization, and onboarding workflows. Built for agencies and consultants.",
-    stat: "$696K",
-    statLabel: "managed monthly spend",
+      "Chat-based trip planning powered by AI. Type \u201cFamily trip to Italy in business class\u201d and get optimized redemption routes, partner options, and booking guidance.",
   },
 ];
 
-const testimonials = [
+const valueCards = [
   {
-    name: "Marcus Chen",
-    role: "CEO, BuildWright Construction",
-    quote:
-      "We were leaving $185K in rewards on the table every year. Mavaree identified the right card setup and now my entire family flies business class — for free.",
-    spend: "$185,000/mo",
-    points: "4.2M points",
-    avatar: "MC",
+    icon: DollarSign,
+    title: "Built for $20K\u2013$500K/month business spend",
+    description: "Designed for the spending patterns and card strategies that matter at scale.",
   },
   {
-    name: "Dr. James Rivera",
-    role: "Founder, Suncoast Medical Group",
-    quote:
-      "The AI Travel Concierge planned our family trip to the Maldives — first class flights and overwater villa, all on points. Total out of pocket: $890 in taxes.",
-    spend: "$310,000/mo",
-    points: "5.8M points",
-    avatar: "JR",
+    icon: TrendingUp,
+    title: "Find missed category rewards",
+    description: "Most business owners use the wrong card for 60%+ of purchases. We fix that.",
   },
   {
-    name: "Sarah Mitchell",
-    role: "CEO, MediaGrowth Agency",
-    quote:
-      "Moving our $47K/mo ad spend to the right card unlocked 3x multipliers we never knew existed. That's $45K+ in additional annual rewards.",
-    spend: "$92,000/mo",
-    points: "2.1M points",
-    avatar: "SM",
+    icon: Bell,
+    title: "Monitor expiring points",
+    description: "Track all your loyalty programs in one place with proactive expiration alerts.",
+  },
+  {
+    icon: Plane,
+    title: "Discover business & first-class award travel",
+    description: "Turn your optimized points into flights and hotels your family will remember.",
   },
 ];
 
 const pricingTiers = [
   {
-    name: "Explorer",
-    price: "Free",
+    name: "Free Audit",
+    price: "$0",
     period: "",
-    description: "Get started with basic points tracking and see what you're missing.",
+    description: "See what you\u2019re missing \u2014 no commitment required.",
     features: [
-      "Track up to 2 loyalty programs",
-      "5 award searches per month",
-      "Basic AI spending summary",
-      "Generic card recommendations",
-      "Community access",
+      "Basic missed-rewards preview",
+      "Summary optimization report",
+      "Limited card recommendations",
+      "Email with your results",
     ],
-    cta: "Get Started Free",
+    cta: "Get My Free Audit",
     highlighted: false,
+    planKey: "free",
   },
   {
-    name: "Professional",
-    price: "$79",
+    name: "Pro",
+    price: "$99",
     period: "/month",
-    description: "For business owners spending $20K\u2013$200K/mo who want to stop leaving rewards on the table.",
-    roi: "Average member recovers $18,400/yr in missed rewards \u2014 that\u2019s 19x your subscription.",
+    description: "For business owners spending $20K\u2013$150K/month.",
     features: [
-      "\u2014 SPENDING INTELLIGENCE \u2014",
-      "AI Spend Analyzer: scans every transaction, shows exactly which card to use where",
-      "Personalized card portfolio strategy based on your actual spend categories",
-      "Connect up to 3 bank/card accounts via Plaid \u2014 real data, not guesswork",
-      "Custom spending reports delivered monthly",
-      "\u2014 TRAVEL & AWARDS \u2014",
-      "AI Travel Concierge: chat-based trip planning using your points",
-      "Unlimited award searches across all airlines and hotels",
-      "Real-time transfer bonus alerts (e.g. \u201c30% Amex \u2192 Virgin bonus ends Friday\u201d)",
-      "\u2014 POINTS PROTECTION \u2014",
-      "Unlimited loyalty program tracking",
-      "Points Health monitoring + email alerts before points expire or devalue",
+      "AI spend analysis across all transactions",
+      "Personalized card portfolio strategy",
+      "Connect up to 5 bank/card accounts via Plaid",
+      "Points Health monitoring + expiration alerts",
+      "Unlimited award searches",
+      "Real-time transfer bonus alerts",
+      "AI Travel Concierge chat",
+      "Monthly optimization report",
       "Priority email support",
     ],
-    cta: "Start Pro Trial",
+    cta: "Start Pro",
     highlighted: true,
+    planKey: "professional",
   },
   {
     name: "Executive",
     price: "$499",
     period: "/month",
-    description: "White-glove service for business owners spending $200K+/mo.",
+    description: "For business owners spending $150K+/month.",
     features: [
-      "Everything in Professional",
-      "Unlimited bank/card account connections",
+      "Everything in Pro",
       "Dedicated human travel consultant",
-      "Custom card optimization strategy + signup bonus timing",
-      "Employee card management + team optimization",
-      "AI Content Engine (articles, newsletters, LinkedIn)",
-      "Real-time alerts + SMS notifications",
+      "Unlimited account connections",
+      "Employee card strategy + team optimization",
       "Quarterly strategy reviews",
-      "Direct booking assistance",
+      "Award booking assistance",
+      "SMS + real-time alerts",
       "Priority phone support",
-      "VIP event access",
     ],
     cta: "Contact Sales",
     highlighted: false,
+    planKey: "executive",
   },
 ];
 
-const targetUsers = [
-  { icon: "🏗️", label: "Construction Companies" },
-  { icon: "🛒", label: "eCommerce Owners" },
-  { icon: "📢", label: "Advertising Agencies" },
-  { icon: "🏥", label: "Medical Practices" },
-  { icon: "💼", label: "Consultants" },
-  { icon: "🚀", label: "High-Spend Entrepreneurs" },
+const trustItems = [
+  {
+    icon: Lock,
+    title: "Bank connections powered by Plaid",
+    description: "Industry-standard secure connections. We never see or store your bank login credentials.",
+  },
+  {
+    icon: Banknote,
+    title: "Payments processed by Stripe",
+    description: "PCI-compliant payment processing. Your card details never touch our servers.",
+  },
+  {
+    icon: Shield,
+    title: "Educational recommendations only",
+    description: "We are not a bank, lender, or financial advisor. All recommendations are for informational purposes.",
+  },
+  {
+    icon: Check,
+    title: "Cancel anytime",
+    description: "No long-term contracts. Cancel your subscription at any time \u2014 no questions asked.",
+  },
+  {
+    icon: Star,
+    title: "Data deletion on request",
+    description: "Request full deletion of your data at any time. Your financial data belongs to you.",
+  },
 ];
-
-const stats = [
-  { value: "$2.4B+", label: "Annual Spend Optimized" },
-  { value: "2,400+", label: "Active Members" },
-  { value: "$18.7M", label: "Rewards Unlocked" },
-  { value: "12.4x", label: "Average ROI" },
-];
-
-const planKeys = ["free", "professional", "executive"];
 
 export default function LandingPage() {
   const mounted = useMounted();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const [monthlySpend, setMonthlySpend] = useState(50000);
+  const [currentRate, setCurrentRate] = useState(1.0);
+  const [targetRate, setTargetRate] = useState(2.5);
+
+  const currentAnnual = monthlySpend * 12 * (currentRate / 100);
+  const optimizedAnnual = monthlySpend * 12 * (targetRate / 100);
+  const annualUpside = optimizedAnnual - currentAnnual;
+
+  const formatCurrency = useCallback((n: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(n);
+  }, []);
 
   const handleSubscribe = async (planKey: string) => {
     if (planKey === "free") {
@@ -237,58 +219,25 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden bg-[#0b1120]">
       {/* Navigation */}
-      <nav className="fixed top-0 z-50 w-full border-b border-white/[0.06] bg-[#0a0a0a]/80 backdrop-blur-xl">
+      <nav className="fixed top-0 z-50 w-full border-b border-white/[0.06] bg-[#0b1120]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <Crown className="h-6 w-6 text-luxury-gold" />
-            <div>
-              <span className="text-xl font-bold">
-                Mava<span className="gold-gradient">ree</span>
-              </span>
-              <p className="hidden sm:block text-[10px] text-platinum-400 leading-tight">
-                Financial optimization for business owners.
-              </p>
-            </div>
+            <span className="text-xl font-bold tracking-tight">
+              Mavaree
+            </span>
           </div>
           <div className="hidden items-center gap-8 md:flex">
-            <a
-              href="#features"
-              className="text-sm text-platinum-400 transition-colors hover:text-white"
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-sm text-platinum-400 transition-colors hover:text-white"
-            >
-              How It Works
-            </a>
-            <a
-              href="#testimonials"
-              className="text-sm text-platinum-400 transition-colors hover:text-white"
-            >
-              Results
-            </a>
-            <a
-              href="#pricing"
-              className="text-sm text-platinum-400 transition-colors hover:text-white"
-            >
-              Pricing
-            </a>
+            <a href="#features" className="text-sm text-platinum-400 transition-colors hover:text-white">Features</a>
+            <a href="#how-it-works" className="text-sm text-platinum-400 transition-colors hover:text-white">How It Works</a>
+            <a href="#calculator" className="text-sm text-platinum-400 transition-colors hover:text-white">ROI Calculator</a>
+            <a href="#pricing" className="text-sm text-platinum-400 transition-colors hover:text-white">Pricing</a>
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="hidden sm:block text-sm text-platinum-400 transition-colors hover:text-white"
-            >
-              Log In
-            </Link>
-            <Link
-              href="/signup"
-              className="hidden sm:block rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-[#e0c992]"
-            >
+            <Link href="/login" className="hidden sm:block text-sm text-platinum-400 transition-colors hover:text-white">Log In</Link>
+            <Link href="/signup" className="hidden sm:block rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-[#0b1120] transition-all hover:bg-[#e0c992]">
               Get Started
             </Link>
             <button
@@ -303,23 +252,28 @@ export default function LandingPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:hidden border-t border-white/[0.06] bg-[#0a0a0a]/95 backdrop-blur-xl px-6 py-4 space-y-3"
+            className="md:hidden border-t border-white/[0.06] bg-[#0b1120]/95 backdrop-blur-xl px-6 py-4 space-y-3"
           >
-            {["Features", "How It Works", "Results", "Pricing"].map((item) => (
+            {[
+              { label: "Features", href: "#features" },
+              { label: "How It Works", href: "#how-it-works" },
+              { label: "ROI Calculator", href: "#calculator" },
+              { label: "Pricing", href: "#pricing" },
+            ].map((item) => (
               <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/ /g, "-")}`}
+                key={item.label}
+                href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className="block text-sm text-platinum-400 transition-colors hover:text-white py-1"
               >
-                {item}
+                {item.label}
               </a>
             ))}
             <div className="flex gap-3 pt-2 border-t border-white/[0.06]">
               <Link href="/login" className="flex-1 text-center rounded-lg border border-white/10 px-4 py-2 text-sm text-white hover:bg-white/5">
                 Log In
               </Link>
-              <Link href="/signup" className="flex-1 text-center rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-black hover:bg-[#e0c992]">
+              <Link href="/signup" className="flex-1 text-center rounded-lg bg-luxury-gold px-4 py-2 text-sm font-semibold text-[#0b1120] hover:bg-[#e0c992]">
                 Get Started
               </Link>
             </div>
@@ -329,9 +283,8 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative flex min-h-screen items-center justify-center pt-20">
-        <div className="absolute inset-0 bg-gradient-luxury" />
-        <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-luxury-gold/[0.03] blur-3xl" />
-        <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-luxury-gold/[0.02] blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b1120] via-[#0f172a] to-[#0b1120]" />
+        <div className="absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-luxury-gold/[0.04] blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl px-6 text-center">
           <motion.div
@@ -339,35 +292,28 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-luxury-gold/20 bg-luxury-gold/5 px-4 py-2">
-              <Sparkles className="h-4 w-4 text-luxury-gold" />
-              <span className="text-sm text-luxury-gold">
-                AI-Powered Financial Optimization · US & Canada
-              </span>
-            </div>
-
-            <h1 className="mx-auto max-w-5xl text-5xl font-bold leading-tight tracking-tight md:text-7xl">
-              You Spend Millions.{" "}
-              <span className="gold-gradient">You Should Be Getting More Back.</span>
+            <h1 className="mx-auto max-w-4xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              You Spend Thousands Every Month.{" "}
+              <span className="gold-gradient">Mavaree Helps You Get More Back.</span>
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-platinum-400 md:text-xl">
-              AI-powered financial optimization for business owners in the{" "}
-              <span className="text-white">US & Canada</span> spending
-              $20K–$500K/month. We find the rewards you&apos;re already owed —{" "}
-              <span className="text-white">luxury travel is just the payoff.</span>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-platinum-400 leading-relaxed md:text-xl">
+              AI-powered spend optimization for business owners in the{" "}
+              <span className="text-white font-medium">US &amp; Canada</span>.
+              Find missed rewards, better card strategies, transfer bonuses,
+              and luxury travel opportunities from the spending you already do.
             </p>
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/signup"
-                className="group flex items-center gap-2 rounded-xl bg-luxury-gold px-8 py-4 text-lg font-semibold text-black transition-all hover:bg-[#e0c992] hover:shadow-luxury-lg"
+                className="group flex items-center gap-2 rounded-xl bg-luxury-gold px-8 py-4 text-lg font-semibold text-[#0b1120] transition-all hover:bg-[#e0c992]"
               >
-                Start Optimizing Free
+                Get My Free Spend Audit
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
               <a
-                href="#features"
+                href="#how-it-works"
                 className="flex items-center gap-2 rounded-xl border border-white/10 px-8 py-4 text-lg font-semibold text-white transition-all hover:border-white/20 hover:bg-white/5"
               >
                 See How It Works
@@ -375,149 +321,53 @@ export default function LandingPage() {
             </div>
 
             <p className="mt-6 text-sm text-platinum-500">
-              No credit card required · Setup in 2 minutes · Cancel anytime · Works with US & Canadian banks
+              No credit card required &middot; Secure bank connections via Plaid &middot; Not financial advice &middot; US &amp; Canada
             </p>
           </motion.div>
 
-          {/* Hero Stats */}
+          {/* Value Cards */}
           <motion.div
             initial={mounted ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 md:grid-cols-4"
+            className="mx-auto mt-20 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
           >
-            {stats.map((stat, i) => (
+            {valueCards.map((card, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 backdrop-blur-sm"
+                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 text-left backdrop-blur-sm"
               >
-                <div className="text-2xl font-bold gold-gradient">
-                  {stat.value}
-                </div>
-                <div className="mt-1 text-xs text-platinum-500">
-                  {stat.label}
-                </div>
+                <card.icon className="h-6 w-6 text-luxury-gold mb-3" />
+                <h3 className="text-sm font-semibold text-white leading-snug">
+                  {card.title}
+                </h3>
+                <p className="mt-1.5 text-xs text-platinum-500 leading-relaxed">
+                  {card.description}
+                </p>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Who It's For */}
-      <section className="relative border-y border-white/[0.06] bg-white/[0.01] py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center">
-            <p className="text-sm font-medium uppercase tracking-wider text-luxury-gold">
-              Built For
-            </p>
-            <h2 className="mt-2 text-2xl font-bold">
-              High-Spending Business Owners
-            </h2>
-            <p className="mt-2 text-platinum-400">
-              Owners spending $20,000–$500,000/month on credit cards
-            </p>
-          </div>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            {targetUsers.map((user, i) => (
-              <motion.div
-                key={i}
-                initial={mounted ? { opacity: 0, scale: 0.9 } : false}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-5 py-3 text-sm"
-              >
-                <span>{user.icon}</span>
-                <span>{user.label}</span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* The Problem */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial={mounted ? { opacity: 0, y: 20 } : false}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mx-auto max-w-4xl text-center"
-          >
-            <p className="text-sm font-medium uppercase tracking-wider text-red-400">
-              The Problem
-            </p>
-            <h2 className="mt-4 text-4xl font-bold md:text-5xl">
-              You&apos;re Losing{" "}
-              <span className="text-red-400">$18,400/year</span> in Rewards
-            </h2>
-            <p className="mt-6 text-lg text-platinum-400">
-              The average business owner spending $120K/month uses the wrong
-              cards for 62% of their purchases. That&apos;s over $10,000/month
-              in missed rewards — enough for business class flights to Europe
-              every quarter.
-            </p>
-          </motion.div>
-
-          <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
-            {[
-              {
-                icon: DollarSign,
-                value: "$121,044",
-                label: "Annual rewards lost on wrong cards",
-                color: "text-red-400",
-              },
-              {
-                icon: Activity,
-                value: "38%",
-                label: "Average optimization rate before Mavaree",
-                color: "text-amber-400",
-              },
-              {
-                icon: TrendingUp,
-                value: "$75,100",
-                label: "Projected annual gain with optimization",
-                color: "text-emerald-400",
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={mounted ? { opacity: 0, y: 20 } : false}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 text-center"
-              >
-                <item.icon className={`mx-auto h-8 w-8 ${item.color}`} />
-                <div className={`mt-3 text-3xl font-bold ${item.color}`}>
-                  {item.value}
-                </div>
-                <p className="mt-2 text-sm text-platinum-400">{item.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Features */}
-      <section id="features" className="py-24">
+      <section id="features" className="py-24 bg-[#0f172a]/50">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center">
             <p className="text-sm font-medium uppercase tracking-wider text-luxury-gold">
-              Platform Features
+              Platform
             </p>
-            <h2 className="mt-4 text-4xl font-bold md:text-5xl">
-              The Operating System for{" "}
-              <span className="gold-gradient">Business Travel Rewards</span>
+            <h2 className="mt-4 text-3xl font-bold md:text-4xl">
+              Six tools.{" "}
+              <span className="gold-gradient">One platform.</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-platinum-400">
-              AI-powered tools that analyze your spend, optimize your cards,
-              search award flights, and automate luxury travel — all in one
-              platform.
+              Everything you need to optimize your business spend, protect your points,
+              and unlock luxury travel &mdash; powered by AI.
             </p>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
               <motion.div
                 key={i}
@@ -527,21 +377,13 @@ export default function LandingPage() {
                 transition={{ delay: i * 0.05 }}
                 className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 transition-all duration-300 hover:border-luxury-gold/20 hover:bg-white/[0.04]"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-luxury-gold/10">
-                  <feature.icon className="h-6 w-6 text-luxury-gold" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-luxury-gold/10">
+                  <feature.icon className="h-5 w-5 text-luxury-gold" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">{feature.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-platinum-400">
                   {feature.description}
                 </p>
-                <div className="mt-4 border-t border-white/[0.06] pt-4">
-                  <div className="text-xl font-bold gold-gradient">
-                    {feature.stat}
-                  </div>
-                  <div className="text-xs text-platinum-500">
-                    {feature.statLabel}
-                  </div>
-                </div>
               </motion.div>
             ))}
           </div>
@@ -549,18 +391,15 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section
-        id="how-it-works"
-        className="border-y border-white/[0.06] bg-white/[0.01] py-24"
-      >
+      <section id="how-it-works" className="py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center">
             <p className="text-sm font-medium uppercase tracking-wider text-luxury-gold">
               How It Works
             </p>
-            <h2 className="mt-4 text-4xl font-bold">
-              Three Steps to{" "}
-              <span className="gold-gradient">Maximum Rewards</span>
+            <h2 className="mt-4 text-3xl font-bold md:text-4xl">
+              Three steps to{" "}
+              <span className="gold-gradient">better rewards</span>
             </h2>
           </div>
 
@@ -570,7 +409,7 @@ export default function LandingPage() {
                 step: "01",
                 title: "Connect Your Cards",
                 description:
-                  "Link your Amex, Chase, Capital One, and bank accounts. Our AI immediately begins analyzing your spending patterns across all categories.",
+                  "Securely link your Amex, Chase, Capital One, and bank accounts through Plaid. Our AI immediately begins analyzing your spending patterns.",
                 icon: CreditCard,
               },
               {
@@ -582,9 +421,9 @@ export default function LandingPage() {
               },
               {
                 step: "03",
-                title: "Travel in Luxury",
+                title: "Optimize & Travel",
                 description:
-                  "Use your optimized points for business class flights, luxury hotels, and exclusive experiences. Our concierge handles the bookings.",
+                  "Use your optimized points for business and first class flights, luxury hotels, and exclusive experiences. Our concierge helps with bookings.",
                 icon: Plane,
               },
             ].map((step, i) => (
@@ -615,60 +454,142 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="py-24">
+      {/* ROI Calculator */}
+      <section id="calculator" className="py-24 bg-[#0f172a]/50">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center">
             <p className="text-sm font-medium uppercase tracking-wider text-luxury-gold">
-              Client Results
+              ROI Calculator
             </p>
-            <h2 className="mt-4 text-4xl font-bold">
-              Real Business Owners.{" "}
-              <span className="gold-gradient">Real Results.</span>
+            <h2 className="mt-4 text-3xl font-bold md:text-4xl">
+              See your{" "}
+              <span className="gold-gradient">potential upside</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-platinum-400">
+              Estimate how much more you could earn by optimizing your business spend with Mavaree.
+            </p>
+          </div>
+
+          <motion.div
+            initial={mounted ? { opacity: 0, y: 20 } : false}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mx-auto mt-12 max-w-3xl rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8"
+          >
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <div>
+                <label className="block text-sm font-medium text-platinum-300 mb-2">
+                  Monthly Business Spend
+                </label>
+                <div>
+                  <Calculator className="h-4 w-4 text-platinum-500 mb-1" />
+                  <input
+                    type="range"
+                    min={10000}
+                    max={500000}
+                    step={5000}
+                    value={monthlySpend}
+                    onChange={(e) => setMonthlySpend(Number(e.target.value))}
+                    className="w-full accent-[#c9a96e]"
+                  />
+                  <div className="mt-1 text-xl font-bold text-white">
+                    {formatCurrency(monthlySpend)}<span className="text-sm font-normal text-platinum-500">/mo</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-platinum-300 mb-2">
+                  Current Avg. Reward Rate
+                </label>
+                <input
+                  type="range"
+                  min={0.5}
+                  max={3.0}
+                  step={0.1}
+                  value={currentRate}
+                  onChange={(e) => setCurrentRate(Number(e.target.value))}
+                  className="w-full mt-6 accent-[#c9a96e]"
+                />
+                <div className="mt-1 text-xl font-bold text-white">
+                  {currentRate.toFixed(1)}%
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-platinum-300 mb-2">
+                  Target Optimized Rate
+                </label>
+                <input
+                  type="range"
+                  min={1.0}
+                  max={5.0}
+                  step={0.1}
+                  value={targetRate}
+                  onChange={(e) => setTargetRate(Number(e.target.value))}
+                  className="w-full mt-6 accent-[#c9a96e]"
+                />
+                <div className="mt-1 text-xl font-bold text-white">
+                  {targetRate.toFixed(1)}%
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 gap-4 border-t border-white/[0.06] pt-8 md:grid-cols-3">
+              <div className="rounded-xl bg-white/[0.03] p-5 text-center">
+                <p className="text-xs uppercase tracking-wider text-platinum-500">Current Annual Rewards</p>
+                <p className="mt-2 text-2xl font-bold text-platinum-300">{formatCurrency(currentAnnual)}</p>
+              </div>
+              <div className="rounded-xl bg-white/[0.03] p-5 text-center">
+                <p className="text-xs uppercase tracking-wider text-platinum-500">Optimized Annual Rewards</p>
+                <p className="mt-2 text-2xl font-bold text-white">{formatCurrency(optimizedAnnual)}</p>
+              </div>
+              <div className="rounded-xl bg-luxury-gold/10 border border-luxury-gold/20 p-5 text-center">
+                <p className="text-xs uppercase tracking-wider text-luxury-gold">Potential Annual Upside</p>
+                <p className="mt-2 text-2xl font-bold gold-gradient">{formatCurrency(annualUpside)}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 text-center">
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 rounded-xl bg-luxury-gold px-6 py-3 text-sm font-semibold text-[#0b1120] transition-all hover:bg-[#e0c992]"
+              >
+                Get My Free Spend Audit
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Trust Section */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center">
+            <p className="text-sm font-medium uppercase tracking-wider text-luxury-gold">
+              Security &amp; Trust
+            </p>
+            <h2 className="mt-4 text-3xl font-bold md:text-4xl">
+              Your data is{" "}
+              <span className="gold-gradient">safe with us</span>
             </h2>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {testimonials.map((t, i) => (
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {trustItems.map((item, i) => (
               <motion.div
                 key={i}
                 initial={mounted ? { opacity: 0, y: 20 } : false}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6"
+                transition={{ delay: i * 0.05 }}
+                className="flex gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5"
               >
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, j) => (
-                    <Star
-                      key={j}
-                      className="h-4 w-4 fill-luxury-gold text-luxury-gold"
-                    />
-                  ))}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-luxury-gold/10">
+                  <item.icon className="h-5 w-5 text-luxury-gold" />
                 </div>
-                <p className="mt-4 text-sm leading-relaxed text-platinum-300">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="mt-6 flex items-center gap-3 border-t border-white/[0.06] pt-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-luxury-gold/10 text-sm font-semibold text-luxury-gold">
-                    {t.avatar}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold">{t.name}</div>
-                    <div className="text-xs text-platinum-500">{t.role}</div>
-                  </div>
-                </div>
-                <div className="mt-4 flex gap-4">
-                  <div className="rounded-lg bg-white/[0.03] px-3 py-1.5 text-xs">
-                    <span className="text-platinum-500">Spend: </span>
-                    <span className="font-semibold text-white">{t.spend}</span>
-                  </div>
-                  <div className="rounded-lg bg-white/[0.03] px-3 py-1.5 text-xs">
-                    <span className="text-platinum-500">Points: </span>
-                    <span className="font-semibold text-luxury-gold">
-                      {t.points}
-                    </span>
-                  </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">{item.title}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-platinum-500">{item.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -677,22 +598,18 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section
-        id="pricing"
-        className="border-y border-white/[0.06] bg-white/[0.01] py-24"
-      >
+      <section id="pricing" className="py-24 bg-[#0f172a]/50">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center">
             <p className="text-sm font-medium uppercase tracking-wider text-luxury-gold">
               Pricing
             </p>
-            <h2 className="mt-4 text-4xl font-bold">
-              Financial Optimization for{" "}
-              <span className="gold-gradient">High Performers</span>
+            <h2 className="mt-4 text-3xl font-bold md:text-4xl">
+              Simple, transparent{" "}
+              <span className="gold-gradient">pricing</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-platinum-400">
-              Choose the plan that matches your ambition. All plans include AI
-              recommendations.
+              Start with a free audit. Upgrade when you&apos;re ready.
             </p>
           </div>
 
@@ -711,7 +628,7 @@ export default function LandingPage() {
                 }`}
               >
                 {tier.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-luxury-gold px-3 py-1 text-xs font-semibold text-black">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-luxury-gold px-3 py-1 text-xs font-semibold text-[#0b1120]">
                     Most Popular
                   </div>
                 )}
@@ -723,47 +640,34 @@ export default function LandingPage() {
                       <span className="text-platinum-500">{tier.period}</span>
                     )}
                   </div>
-                    <p className="mt-2 text-sm text-platinum-400">
-                      {tier.description}
-                    </p>
-                    {tier.roi && (
-                      <p className="mt-3 rounded-lg bg-luxury-gold/10 px-3 py-2 text-xs font-medium text-luxury-gold">
-                        {tier.roi}
-                      </p>
-                    )}
-                  </div>
-                  <ul className="mt-6 flex-1 space-y-3">
-                    {tier.features.map((f, j) => (
-                      <li key={j} className={`flex items-start gap-2 text-sm ${
-                        f.startsWith("\u2014") ? "mt-4 first:mt-0" : ""
-                      }`}>
-                        {f.startsWith("\u2014") ? (
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold/70">{f.replace(/\u2014/g, "").trim()}</span>
-                        ) : (
-                          <>
-                            <Check
-                              className={`mt-0.5 h-4 w-4 shrink-0 ${
-                                tier.highlighted
-                                  ? "text-luxury-gold"
-                                  : "text-platinum-500"
-                              }`}
-                            />
-                            <span className="text-platinum-300">{f}</span>
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="mt-2 text-sm text-platinum-400">
+                    {tier.description}
+                  </p>
+                </div>
+                <ul className="mt-6 flex-1 space-y-3">
+                  {tier.features.map((f, j) => (
+                    <li key={j} className="flex items-start gap-2 text-sm">
+                      <Check
+                        className={`mt-0.5 h-4 w-4 shrink-0 ${
+                          tier.highlighted
+                            ? "text-luxury-gold"
+                            : "text-platinum-500"
+                        }`}
+                      />
+                      <span className="text-platinum-300">{f}</span>
+                    </li>
+                  ))}
+                </ul>
                 <button
-                  onClick={() => handleSubscribe(planKeys[i])}
-                  disabled={loadingPlan === planKeys[i]}
+                  onClick={() => handleSubscribe(tier.planKey)}
+                  disabled={loadingPlan === tier.planKey}
                   className={`mt-6 block w-full rounded-xl py-3 text-center text-sm font-semibold transition-all disabled:opacity-60 ${
                     tier.highlighted
-                      ? "bg-luxury-gold text-black hover:bg-[#e0c992]"
+                      ? "bg-luxury-gold text-[#0b1120] hover:bg-[#e0c992]"
                       : "border border-white/10 text-white hover:border-white/20 hover:bg-white/5"
                   }`}
                 >
-                  {loadingPlan === planKeys[i] ? "Processing..." : `${tier.cta} →`}
+                  {loadingPlan === tier.planKey ? "Processing..." : `${tier.cta} \u2192`}
                 </button>
               </motion.div>
             ))}
@@ -784,21 +688,19 @@ export default function LandingPage() {
             <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-luxury-gold/[0.05] blur-3xl" />
 
             <div className="relative">
-              <Award className="mx-auto h-12 w-12 text-luxury-gold" />
-              <h2 className="mt-6 text-4xl font-bold md:text-5xl">
-                Ready to Optimize Your{" "}
-                <span className="gold-gradient">$100K+ Monthly Spend?</span>
+              <h2 className="text-3xl font-bold md:text-4xl lg:text-5xl">
+                Ready to optimize your{" "}
+                <span className="gold-gradient">business spend?</span>
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-lg text-platinum-400">
-                Join 2,400+ business owners who have unlocked $18.7M in rewards
-                with Mavaree.
+                Start with a free audit and see exactly where you&apos;re leaving rewards on the table.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
                   href="/signup"
-                  className="group flex items-center gap-2 rounded-xl bg-luxury-gold px-8 py-4 text-lg font-semibold text-black transition-all hover:bg-[#e0c992]"
+                  className="group flex items-center gap-2 rounded-xl bg-luxury-gold px-8 py-4 text-lg font-semibold text-[#0b1120] transition-all hover:bg-[#e0c992]"
                 >
-                  Start Optimizing Free
+                  Get My Free Spend Audit
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <a
@@ -820,12 +722,10 @@ export default function LandingPage() {
             <div className="md:col-span-1">
               <div className="flex items-center gap-2">
                 <Crown className="h-5 w-5 text-luxury-gold" />
-                <span className="font-bold">
-                  Mava<span className="gold-gradient">ree</span>
-                </span>
+                <span className="font-bold tracking-tight">Mavaree</span>
               </div>
               <p className="mt-3 text-sm text-platinum-500 leading-relaxed">
-                AI-powered financial optimization for business owners in the US & Canada.
+                AI-powered spend optimization for business owners in the US &amp; Canada.
               </p>
             </div>
             <div>
@@ -834,7 +734,7 @@ export default function LandingPage() {
                 <a href="#features" className="text-sm text-platinum-500 transition-colors hover:text-white">Features</a>
                 <a href="#pricing" className="text-sm text-platinum-500 transition-colors hover:text-white">Pricing</a>
                 <a href="#how-it-works" className="text-sm text-platinum-500 transition-colors hover:text-white">How It Works</a>
-                <a href="#testimonials" className="text-sm text-platinum-500 transition-colors hover:text-white">Results</a>
+                <a href="#calculator" className="text-sm text-platinum-500 transition-colors hover:text-white">ROI Calculator</a>
               </div>
             </div>
             <div>
@@ -848,17 +748,26 @@ export default function LandingPage() {
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Get Started</h4>
               <div className="flex flex-col gap-2">
-                <Link href="/signup" className="text-sm text-platinum-500 transition-colors hover:text-white">Create Account</Link>
+                <Link href="/signup" className="text-sm text-platinum-500 transition-colors hover:text-white">Free Spend Audit</Link>
                 <Link href="/login" className="text-sm text-platinum-500 transition-colors hover:text-white">Sign In</Link>
               </div>
             </div>
           </div>
-          <div className="mt-8 border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+
+          <div className="mt-8 border-t border-white/[0.06] pt-8">
+            <p className="text-xs text-platinum-600 leading-relaxed max-w-4xl">
+              Mavaree provides educational rewards optimization tools. We are not a bank, lender, financial advisor,
+              tax advisor, or credit card issuer. Results vary based on eligibility, spending patterns, card approvals,
+              issuer rules, and redemption availability.
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-platinum-600">
-              © 2026 Mavaree. All rights reserved. Not financial advice. Results may vary.
+              &copy; 2026 Mavaree. All rights reserved.
             </p>
             <p className="text-xs text-platinum-600">
-              Bank-level encryption · SOC 2 compliant · US & Canada
+              Bank connections via Plaid &middot; Payments via Stripe &middot; US &amp; Canada
             </p>
           </div>
         </div>

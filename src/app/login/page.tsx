@@ -46,9 +46,7 @@ function LoginContent() {
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Crown className="h-8 w-8 text-luxury-gold" />
-            <span className="text-2xl font-bold">
-              Mava<span className="gold-gradient">ree</span>
-            </span>
+            <span className="text-2xl font-bold tracking-tight">Mavaree</span>
           </Link>
           <h1 className="mt-6 text-2xl font-bold text-white">Welcome back</h1>
           <p className="mt-2 text-sm text-platinum-400">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Crown, Loader2, Mail, Lock, User, AlertCircle, Check } from "lucide-react";
+import { Crown, Loader2, Mail, Lock, User, AlertCircle, Check, DollarSign, Globe } from "lucide-react";
 
 export default function SignupPage() {
   const { signUp, signInWithGoogle } = useAuth();
@@ -12,6 +12,8 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [monthlySpend, setMonthlySpend] = useState("");
+  const [country, setCountry] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -66,11 +68,9 @@ export default function SignupPage() {
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Crown className="h-8 w-8 text-luxury-gold" />
-            <span className="text-2xl font-bold">
-              Mava<span className="gold-gradient">ree</span>
-            </span>
+            <span className="text-2xl font-bold tracking-tight">Mavaree</span>
           </Link>
-          <h1 className="mt-6 text-2xl font-bold text-white">Start optimizing today</h1>
+          <h1 className="mt-6 text-2xl font-bold text-white">Start with your free Mavaree Spend Audit</h1>
           <p className="mt-2 text-sm text-platinum-400">
             Create your free account — no credit card required
           </p>
@@ -136,6 +136,47 @@ export default function SignupPage() {
             </div>
           </div>
 
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-platinum-300">
+              Estimated Monthly Business Card Spend
+            </label>
+            <div className="relative">
+              <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-platinum-500" />
+              <select
+                value={monthlySpend}
+                onChange={(e) => setMonthlySpend(e.target.value)}
+                required
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] py-3 pl-10 pr-4 text-sm text-white outline-none transition-all focus:border-luxury-gold/30 focus:ring-1 focus:ring-luxury-gold/20 appearance-none"
+              >
+                <option value="" className="bg-[#0a0a0a]">Select range</option>
+                <option value="under-20k" className="bg-[#0a0a0a]">Under $20K/month</option>
+                <option value="20k-50k" className="bg-[#0a0a0a]">$20K – $50K/month</option>
+                <option value="50k-150k" className="bg-[#0a0a0a]">$50K – $150K/month</option>
+                <option value="150k-500k" className="bg-[#0a0a0a]">$150K – $500K/month</option>
+                <option value="500k-plus" className="bg-[#0a0a0a]">$500K+/month</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-platinum-300">
+              Country
+            </label>
+            <div className="relative">
+              <Globe className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-platinum-500" />
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                required
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] py-3 pl-10 pr-4 text-sm text-white outline-none transition-all focus:border-luxury-gold/30 focus:ring-1 focus:ring-luxury-gold/20 appearance-none"
+              >
+                <option value="" className="bg-[#0a0a0a]">Select country</option>
+                <option value="US" className="bg-[#0a0a0a]">United States</option>
+                <option value="CA" className="bg-[#0a0a0a]">Canada</option>
+              </select>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -147,7 +188,7 @@ export default function SignupPage() {
                 Creating account...
               </>
             ) : (
-              "Create Free Account"
+              "Create Account"
             )}
           </button>
         </form>
@@ -198,7 +239,7 @@ export default function SignupPage() {
         </p>
 
         <div className="mt-6 space-y-2">
-          {["No credit card required", "Cancel anytime", "Free tier available forever"].map((item) => (
+          {["No credit card required", "Secure bank connections via Plaid", "Cancel anytime", "US & Canada only"].map((item) => (
             <div key={item} className="flex items-center gap-2 text-xs text-platinum-500">
               <Check className="h-3 w-3 text-emerald-400" />
               {item}

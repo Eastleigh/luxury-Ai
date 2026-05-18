@@ -20,9 +20,7 @@ export default function PrivacyPage() {
 
         <div className="flex items-center gap-3 mb-8">
           <Crown className="h-6 w-6 text-luxury-gold" />
-          <span className="text-xl font-bold">
-            Mava<span className="gold-gradient">ree</span>
-          </span>
+          <span className="text-xl font-bold tracking-tight">Mavaree</span>
         </div>
 
         <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
