@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { sendEmail, buildUpgradeEmail } from "@/lib/resend";
 
 function getStripeClient() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -73,6 +74,11 @@ export async function POST(request: NextRequest) {
               updated_at: new Date().toISOString(),
             })
             .eq("id", user.id);
+
+          const userName = user.user_metadata?.full_name || customerEmail.split("@")[0];
+          const upgradeEmail = buildUpgradeEmail(userName, plan);
+          upgradeEmail.to = customerEmail;
+          await sendEmail(upgradeEmail).catch(() => {});
         }
         break;
       }
