@@ -20,6 +20,7 @@ import {
   X,
   Building2,
   Shield,
+  LineChart,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -32,6 +33,7 @@ const navItems = [
   { href: "/travel", label: "Travel & Awards", icon: Plane },
   { href: "/health", label: "Points Health", icon: ShieldAlert },
   { href: "/content", label: "Content Engine", icon: FileText },
+  { href: "/analytics", label: "Analytics", icon: LineChart },
   { href: "/pricing", label: "Membership", icon: Crown },
   { href: "/crm", label: "CRM & Clients", icon: Users },
   { href: "/admin", label: "Admin", icon: Shield },
