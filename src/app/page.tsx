@@ -342,7 +342,7 @@ export default function LandingPage() {
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-luxury-gold/20 bg-luxury-gold/5 px-4 py-2">
               <Sparkles className="h-4 w-4 text-luxury-gold" />
               <span className="text-sm text-luxury-gold">
-                AI-Powered Financial Optimization
+                AI-Powered Financial Optimization · US & Canada
               </span>
             </div>
 
@@ -352,7 +352,8 @@ export default function LandingPage() {
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg text-platinum-400 md:text-xl">
-              AI-powered financial optimization for business owners spending
+              AI-powered financial optimization for business owners in the{" "}
+              <span className="text-white">US & Canada</span> spending
               $20K–$500K/month. We find the rewards you&apos;re already owed —{" "}
               <span className="text-white">luxury travel is just the payoff.</span>
             </p>
@@ -374,7 +375,7 @@ export default function LandingPage() {
             </div>
 
             <p className="mt-6 text-sm text-platinum-500">
-              No credit card required · Setup in 2 minutes · Cancel anytime
+              No credit card required · Setup in 2 minutes · Cancel anytime · Works with US & Canadian banks
             </p>
           </motion.div>
 
