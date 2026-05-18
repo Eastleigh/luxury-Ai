@@ -7,13 +7,11 @@ import Link from "next/link";
 import {
   CreditCard,
   Plane,
-  TrendingUp,
   Shield,
   BarChart3,
   ArrowRight,
   Check,
   Star,
-  DollarSign,
   Crown,
   ChevronRight,
   Bot,
