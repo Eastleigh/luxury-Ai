@@ -89,9 +89,9 @@ export default function ContentPage() {
       { title: "Transfer Bonus Alert: 40% Bonus to ANA Mileage Club", views: 7600, engagement: 6.8, conversions: 29 },
     ],
     channelPerformance: [
-      { channel: "Newsletter", subscribers: 3240, openRate: 42, clickRate: 8.2, revenue: 12400 },
-      { channel: "LinkedIn", followers: 8900, openRate: 0, clickRate: 3.1, revenue: 8200 },
-      { channel: "Blog", subscribers: 0, openRate: 0, clickRate: 2.4, revenue: 4800 },
+      { channel: "Newsletter", subscribers: 3240, followers: 0, openRate: 42, clickRate: 8.2, revenue: 12400 },
+      { channel: "LinkedIn", subscribers: 0, followers: 8900, openRate: 0, clickRate: 3.1, revenue: 8200 },
+      { channel: "Blog", subscribers: 0, followers: 0, openRate: 0, clickRate: 2.4, revenue: 4800 },
     ],
   };
 
