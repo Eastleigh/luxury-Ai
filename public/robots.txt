@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://luxury-ai-rho.vercel.app/sitemap.xml

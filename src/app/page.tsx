@@ -816,46 +816,50 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-white/[0.06] py-12">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex items-center gap-2">
-              <Crown className="h-5 w-5 text-luxury-gold" />
-              <span className="font-bold">
-                Mava<span className="gold-gradient">ree</span>
-              </span>
-              <span className="ml-2 text-sm text-platinum-500">
-                AI-Powered Spending Optimization
-              </span>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-2">
+                <Crown className="h-5 w-5 text-luxury-gold" />
+                <span className="font-bold">
+                  Mava<span className="gold-gradient">ree</span>
+                </span>
+              </div>
+              <p className="mt-3 text-sm text-platinum-500 leading-relaxed">
+                AI-powered financial optimization for business owners in the US & Canada.
+              </p>
             </div>
-            <div className="flex items-center gap-6">
-              <a
-                href="#features"
-                className="text-sm text-platinum-500 transition-colors hover:text-white"
-              >
-                Features
-              </a>
-              <a
-                href="#pricing"
-                className="text-sm text-platinum-500 transition-colors hover:text-white"
-              >
-                Pricing
-              </a>
-              <a
-                href="#testimonials"
-                className="text-sm text-platinum-500 transition-colors hover:text-white"
-              >
-                Results
-              </a>
-              <Link
-                href="/signup"
-                className="text-sm text-platinum-500 transition-colors hover:text-white"
-              >
-                Get Started
-              </Link>
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-3">Product</h4>
+              <div className="flex flex-col gap-2">
+                <a href="#features" className="text-sm text-platinum-500 transition-colors hover:text-white">Features</a>
+                <a href="#pricing" className="text-sm text-platinum-500 transition-colors hover:text-white">Pricing</a>
+                <a href="#how-it-works" className="text-sm text-platinum-500 transition-colors hover:text-white">How It Works</a>
+                <a href="#testimonials" className="text-sm text-platinum-500 transition-colors hover:text-white">Results</a>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-3">Company</h4>
+              <div className="flex flex-col gap-2">
+                <Link href="/privacy" className="text-sm text-platinum-500 transition-colors hover:text-white">Privacy Policy</Link>
+                <Link href="/terms" className="text-sm text-platinum-500 transition-colors hover:text-white">Terms of Service</Link>
+                <a href="mailto:support@mavaree.com" className="text-sm text-platinum-500 transition-colors hover:text-white">Contact Us</a>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-3">Get Started</h4>
+              <div className="flex flex-col gap-2">
+                <Link href="/signup" className="text-sm text-platinum-500 transition-colors hover:text-white">Create Account</Link>
+                <Link href="/login" className="text-sm text-platinum-500 transition-colors hover:text-white">Sign In</Link>
+              </div>
             </div>
           </div>
-          <div className="mt-8 border-t border-white/[0.06] pt-8 text-center text-xs text-platinum-600">
-            © 2026 Mavaree. All rights reserved. Not financial advice. Results
-            may vary.
+          <div className="mt-8 border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-platinum-600">
+              © 2026 Mavaree. All rights reserved. Not financial advice. Results may vary.
+            </p>
+            <p className="text-xs text-platinum-600">
+              Bank-level encryption · SOC 2 compliant · US & Canada
+            </p>
           </div>
         </div>
       </footer>
