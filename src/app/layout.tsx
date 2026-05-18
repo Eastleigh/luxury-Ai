@@ -3,7 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastProvider } from "@/components/ui/Toast";
 
-const siteUrl = "https://luxury-ai-rho.vercel.app";
+const siteUrl = "https://mavaree.com";
 
 export const metadata: Metadata = {
   title: {
@@ -81,7 +81,7 @@ export default function RootLayout({
       <head>
         <script
           defer
-          data-domain="luxury-ai-rho.vercel.app"
+          data-domain="mavaree.com"
           src="https://plausible.io/js/script.js"
         />
         <script
