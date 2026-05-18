@@ -9,11 +9,21 @@ let _supabase: SupabaseClient | null = null;
 export function getSupabase(): SupabaseClient | null {
   if (!supabaseUrl || !supabaseAnonKey) return null;
   if (!_supabase) {
-    _supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    try {
+      _supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    } catch {
+      return null;
+    }
   }
   return _supabase;
 }
 
-export const supabase = supabaseUrl && supabaseAnonKey
-  ? createBrowserClient(supabaseUrl, supabaseAnonKey)
-  : null;
+let _defaultSupabase: SupabaseClient | null = null;
+try {
+  _defaultSupabase = supabaseUrl && supabaseAnonKey
+    ? createBrowserClient(supabaseUrl, supabaseAnonKey)
+    : null;
+} catch {
+  _defaultSupabase = null;
+}
+export const supabase = _defaultSupabase;
